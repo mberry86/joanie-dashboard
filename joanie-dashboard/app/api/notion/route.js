@@ -1,17 +1,31 @@
-import { Client } from '@notionhq/client';
-
-const notion = new Client({ auth: process.env.NOTION_API_KEY });
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
+const NOTION_API_KEY = process.env.NOTION_API_KEY;
 
 export async function GET() {
   try {
-    const response = await notion.databases.query({
-      database_id: DATABASE_ID,
-      sorts: [{ property: 'Date', direction: 'descending' }],
-      page_size: 100,
+    if (!NOTION_API_KEY) throw new Error('NOTION_API_KEY is not set');
+    if (!DATABASE_ID) throw new Error('NOTION_DATABASE_ID is not set');
+
+    const res = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${NOTION_API_KEY}`,
+        'Content-Type': 'application/json',
+        'Notion-Version': '2022-06-28',
+      },
+      body: JSON.stringify({
+        sorts: [{ property: 'Date', direction: 'descending' }],
+        page_size: 100,
+      }),
     });
 
-    const entries = response.results.map((page) => {
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(`Notion API error: ${err.message || res.status}`);
+    }
+
+    const response = await res.json();
+    const entries = (response.results || []).map((page) => {
       const props = page.properties;
       return {
         id: page.id,
@@ -30,7 +44,6 @@ export async function GET() {
       };
     });
 
-    // Compute metrics
     const totalEntries = entries.length;
     const scoredEntries = entries.filter(e => e.qualityScore !== null);
     const avgQuality = scoredEntries.length > 0
@@ -40,7 +53,6 @@ export async function GET() {
     const flags = entries.filter(e => e.qualityScore !== null && e.qualityScore < 6);
     const outputsSaved = entries.filter(e => e.outputSaved).length;
 
-    // Quality by task type
     const taskTypes = {};
     entries.forEach(e => {
       if (e.taskType && e.qualityScore !== null) {
@@ -50,21 +62,13 @@ export async function GET() {
       }
     });
     const qualityByTask = Object.entries(taskTypes).map(([type, data]) => ({
-      type,
-      avg: parseFloat((data.total / data.count).toFixed(1)),
-      count: data.count,
+      type, avg: parseFloat((data.total / data.count).toFixed(1)), count: data.count,
     })).sort((a, b) => b.avg - a.avg);
 
-    // Task type distribution
     const taskDist = {};
-    entries.forEach(e => {
-      if (e.taskType) taskDist[e.taskType] = (taskDist[e.taskType] || 0) + 1;
-    });
-    const taskDistribution = Object.entries(taskDist)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value);
+    entries.forEach(e => { if (e.taskType) taskDist[e.taskType] = (taskDist[e.taskType] || 0) + 1; });
+    const taskDistribution = Object.entries(taskDist).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
 
-    // Weekly trend (last 10 weeks)
     const weeklyData = {};
     entries.forEach(e => {
       if (e.weekNumber && e.qualityScore !== null) {
@@ -73,35 +77,19 @@ export async function GET() {
         weeklyData[e.weekNumber].count += 1;
       }
     });
-    const weeklyTrend = Object.entries(weeklyData)
-      .sort((a, b) => a[0] - b[0])
-      .slice(-10)
-      .map(([week, data]) => ({
-        week: `W${week}`,
-        avgScore: parseFloat((data.scores.reduce((s, v) => s + v, 0) / data.scores.length).toFixed(1)),
-        count: data.count,
-      }));
+    const weeklyTrend = Object.entries(weeklyData).sort((a, b) => a[0] - b[0]).slice(-10).map(([week, data]) => ({
+      week: `W${week}`,
+      avgScore: parseFloat((data.scores.reduce((s, v) => s + v, 0) / data.scores.length).toFixed(1)),
+      count: data.count,
+    }));
 
-    // Outcome distribution
     const outcomeDist = {};
-    entries.forEach(e => {
-      if (e.outcome) outcomeDist[e.outcome] = (outcomeDist[e.outcome] || 0) + 1;
-    });
-
-    // Recent 5 entries for activity feed
-    const recentActivity = entries.slice(0, 5);
+    entries.forEach(e => { if (e.outcome) outcomeDist[e.outcome] = (outcomeDist[e.outcome] || 0) + 1; });
 
     return Response.json({
-      totalEntries,
-      avgQuality,
-      flagCount: flags.length,
-      outputsSaved,
-      qualityByTask,
-      taskDistribution,
-      weeklyTrend,
-      outcomeDist,
-      recentActivity,
-      flags: flags.slice(0, 5),
+      totalEntries, avgQuality, flagCount: flags.length, outputsSaved,
+      qualityByTask, taskDistribution, weeklyTrend, outcomeDist,
+      recentActivity: entries.slice(0, 5), flags: flags.slice(0, 5),
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
