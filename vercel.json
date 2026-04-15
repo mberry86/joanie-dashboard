@@ -1,5 +1,6 @@
 {
   "outputDirectory": ".",
+  "cleanUrls": true,
   "functions": {
     "api/notion-data.js": {
       "memory": 256,
