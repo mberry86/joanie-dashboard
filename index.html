@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centerfield BD Command Center</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f; --bg2: #111318; --bg3: #181c22; --bg4: #1e232b;
+    --border: rgba(255,255,255,0.07); --border2: rgba(255,255,255,0.12);
+    --text: #f0f2f5; --text2: #8a9bb0; --text3: #4a5568;
+    --green: #00d4a0; --green-dim: rgba(0,212,160,0.12); --green-border: rgba(0,212,160,0.25);
+    --blue: #4a9eff; --blue-dim: rgba(74,158,255,0.1); --blue-border: rgba(74,158,255,0.22);
+    --amber: #f5a623; --amber-dim: rgba(245,166,35,0.1); --amber-border: rgba(245,166,35,0.22);
+    --purple: #a78bfa; --purple-dim: rgba(167,139,250,0.1); --purple-border: rgba(167,139,250,0.22);
+    --red: #ff6b6b; --red-dim: rgba(255,107,107,0.1); --red-border: rgba(255,107,107,0.22);
+    --radius: 10px; --radius-lg: 14px;
+    --font: 'DM Sans', sans-serif; --mono: 'DM Mono', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; line-height: 1.6; min-height: 100vh; }
+  .shell { display: flex; min-height: 100vh; }
+
+  /* Sidebar */
+  .sidebar { width: 220px; flex-shrink: 0; background: var(--bg2); border-right: 1px solid var(--border); padding: 24px 0; position: sticky; top: 0; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+  .sidebar-logo { padding: 0 20px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+  .sidebar-logo .co { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 4px; }
+  .sidebar-logo .name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .sidebar-logo .sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .live-badge { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--green); margin-top: 6px; }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .sidebar-section { padding: 0 12px; margin-bottom: 8px; }
+  .sidebar-section-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); padding: 0 8px; margin-bottom: 4px; }
+  .nav-item { display: flex; align-items: center; gap: 8px; padding: 7px 8px; border-radius: 7px; font-size: 13px; color: var(--text2); cursor: pointer; transition: all 0.15s; border: none; background: none; width: 100%; text-align: left; }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active { background: var(--green-dim); color: var(--green); border: 1px solid var(--green-border); }
+  .nav-item .nav-icon { font-size: 13px; width: 16px; flex-shrink: 0; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; margin-left: auto; }
+  .sidebar-footer { margin-top: auto; padding: 16px 20px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); line-height: 1.5; }
+  .sidebar-footer strong { color: var(--text2); display: block; margin-bottom: 2px; }
+  #lastFetched { font-size: 10px; color: var(--green); }
+
+  /* Main */
+  .main { flex: 1; min-width: 0; padding: 28px 32px; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+  .topbar-left .page-title { font-size: 22px; font-weight: 600; color: var(--text); }
+  .topbar-left .page-sub { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .topbar-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 20px; border: 1px solid; }
+  .chip-green { background: var(--green-dim); color: var(--green); border-color: var(--green-border); }
+  .chip-amber { background: var(--amber-dim); color: var(--amber); border-color: var(--amber-border); }
+  .chip-dim { background: var(--bg3); color: var(--text2); border-color: var(--border2); }
+  .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  /* Loading */
+  .loading-bar { height: 2px; background: var(--border); border-radius: 2px; margin-bottom: 28px; overflow: hidden; }
+  .loading-fill { height: 2px; background: var(--green); border-radius: 2px; width: 0%; transition: width 0.3s ease; }
+  .loading-text { font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+  .sl { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text3); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .sl::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* Metrics */
+  .metric-row { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 10px; margin-bottom: 28px; }
+  .metric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; transition: border-color 0.15s; }
+  .metric-card:hover { border-color: var(--border2); }
+  .metric-card .ml { font-size: 11px; color: var(--text3); margin-bottom: 6px; font-weight: 500; }
+  .metric-card .mv { font-size: 24px; font-weight: 600; color: var(--text); line-height: 1; }
+  .metric-card .ms { font-size: 11px; color: var(--text3); margin-top: 5px; }
+  .up { color: var(--green); font-size: 11px; margin-top: 5px; }
+
+  /* Funnel */
+  .funnel { display: flex; margin-bottom: 28px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); }
+  .funnel-stage { flex: 1; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.15s; position: relative; border-right: 1px solid var(--border); }
+  .funnel-stage:last-child { border-right: none; }
+  .funnel-stage:hover { background: var(--bg3); }
+  .funnel-stage.active-f { background: var(--green-dim) !important; }
+  .funnel-stage .fn { font-size: 22px; font-weight: 600; color: var(--text); line-height: 1; }
+  .funnel-stage .fl { font-size: 10px; color: var(--text2); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+  .f1{background:var(--bg2)} .f2{background:#0e1219} .f3{background:#0d1118} .f4{background:#0c1016}
+  .f5{background:#0b0f14}
+
+  /* Card / Table */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 24px; }
+  .card-header { padding: 14px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .card-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .filter-row { display: flex; gap: 6px; flex-wrap: wrap; }
+  .fbtn { font-size: 11px; padding: 4px 10px; border-radius: 15px; border: 1px solid var(--border2); background: transparent; color: var(--text2); cursor: pointer; transition: all 0.15s; font-family: var(--font); }
+  .fbtn:hover { background: var(--bg3); color: var(--text); }
+  .fbtn.on { background: var(--green-dim); color: var(--green); border-color: var(--green-border); font-weight: 500; }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 10px; font-weight: 600; color: var(--text3); padding: 10px 16px; border-bottom: 1px solid var(--border); text-transform: uppercase; letter-spacing: 0.07em; background: var(--bg2); white-space: nowrap; }
+  td { padding: 11px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--bg3); }
+  .row-t1 td:first-child { border-left: 2px solid var(--green); }
+  .row-t2 td:first-child { border-left: 2px solid var(--blue); }
+  .row-t3 td:first-child { border-left: 2px solid var(--amber); }
+  .row-ws td:first-child { border-left: 2px solid var(--purple); }
+  .pill { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 20px; white-space: nowrap; }
+  .p-active{background:var(--green-dim);color:var(--green);border:1px solid var(--green-border)}
+  .p-nego{background:var(--purple-dim);color:var(--purple);border:1px solid var(--purple-border)}
+  .p-eval{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border)}
+  .p-contact{background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border)}
+  .p-target{background:var(--bg4);color:var(--text3);border:1px solid var(--border)}
+  .p-compliance{background:var(--red-dim);color:var(--red);border:1px solid var(--red-border)}
+  .tier-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; vertical-align: middle; position: relative; top: -1px; }
+  .dot-t1{background:var(--green)} .dot-t2{background:var(--blue)} .dot-t3{background:var(--amber)} .dot-ws{background:var(--purple)}
+  .score-bar { display: flex; align-items: center; gap: 8px; }
+  .sb-track { flex: 1; height: 3px; background: var(--bg4); border-radius: 2px; overflow: hidden; min-width: 50px; }
+  .sb-fill { height: 3px; border-radius: 2px; }
+  .sb-num { font-size: 11px; font-weight: 600; min-width: 22px; font-family: var(--mono); }
+  .co-name { font-weight: 500; font-size: 13px; color: var(--text); }
+  .rev { font-weight: 600; font-size: 12px; font-family: var(--mono); }
+  .owner-tag { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+  .action-text { font-size: 11px; color: var(--text2); max-width: 180px; line-height: 1.4; }
+  .notion-link { font-size: 10px; color: var(--blue); text-decoration: none; opacity: 0.7; }
+  .notion-link:hover { opacity: 1; }
+
+  /* ICP */
+  .icp-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-bottom: 24px; }
+  .icp-card { border-radius: var(--radius-lg); padding: 16px; border: 1px solid; display: flex; flex-direction: column; gap: 8px; }
+  .icp-t1{background:var(--green-dim);border-color:var(--green-border)}
+  .icp-t2{background:var(--blue-dim);border-color:var(--blue-border)}
+  .icp-t3{background:var(--amber-dim);border-color:var(--amber-border)}
+  .icp-ws{background:var(--purple-dim);border-color:var(--purple-border)}
+  .icp-badge { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+  .icp-t1 .icp-badge{color:var(--green)} .icp-t2 .icp-badge{color:var(--blue)} .icp-t3 .icp-badge{color:var(--amber)} .icp-ws .icp-badge{color:var(--purple)}
+  .icp-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .icp-desc { font-size: 11px; color: var(--text2); line-height: 1.5; }
+  .icp-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .icp-tag { font-size: 10px; padding: 2px 6px; border-radius: 4px; background: rgba(255,255,255,0.05); color: var(--text3); }
+  .icp-meta { font-size: 11px; color: var(--text3); line-height: 1.5; margin-top: auto; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); }
+
+  /* Client health */
+  .client-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin-bottom: 24px; }
+  .client-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 18px; transition: border-color 0.15s; }
+  .client-card:hover { border-color: var(--border2); }
+  .client-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .client-name { font-size: 15px; font-weight: 600; color: var(--text); }
+  .client-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+  .bar-wrap { margin-bottom: 8px; }
+  .bar-labels { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 4px; }
+  .bar-labels span:first-child{color:var(--text3)} .bar-labels span:last-child{font-weight:600;font-family:var(--mono)}
+  .bar-track { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+  .bar-fill { height: 4px; border-radius: 2px; transition: width 0.8s ease; }
+  .client-opp { margin-top: 12px; font-size: 11px; padding: 9px 11px; border-radius: 8px; line-height: 1.5; border: 1px solid; }
+  .opp-green{background:var(--green-dim);color:#7fffd4;border-color:var(--green-border)}
+  .opp-amber{background:var(--amber-dim);color:#ffd29a;border-color:var(--amber-border)}
+  .opp-purple{background:var(--purple-dim);color:#d4bbff;border-color:var(--purple-border)}
+  .opp-red{background:var(--red-dim);color:#ffaaaa;border-color:var(--red-border)}
+
+  /* Contacts */
+  .contacts-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 24px; }
+  .contact-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 14px; transition: border-color 0.15s; }
+  .contact-card:hover { border-color: var(--border2); }
+  .contact-name { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .contact-title { font-size: 11px; color: var(--text3); margin-bottom: 8px; }
+  .contact-meta { display: flex; flex-direction: column; gap: 4px; }
+  .contact-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text2); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .st-contacted{background:var(--blue)} .st-responded,.st-meeting,.st-discussion{background:var(--green)} .st-unresponsive{background:var(--red)} .st-none{background:var(--text3)}
+
+  /* Supply map */
+  .supply-arch { margin-bottom: 24px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); }
+  .sa-row { display: flex; border-bottom: 1px solid var(--border); }
+  .sa-row:last-child { border-bottom: none; }
+  .sa-label { width: 140px; flex-shrink: 0; padding: 14px 16px; font-size: 11px; font-weight: 600; border-right: 1px solid var(--border); display: flex; align-items: center; line-height: 1.4; }
+  .sa-body { flex: 1; padding: 12px 16px; font-size: 11px; color: var(--text2); line-height: 1.6; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+  .sa-smp{background:var(--green-dim)} .sa-smp .sa-label{color:var(--green);border-color:var(--green-border)}
+  .sa-mp{background:var(--blue-dim)} .sa-mp .sa-label{color:var(--blue);border-color:var(--blue-border)}
+  .sa-mm{background:var(--purple-dim)} .sa-mm .sa-label{color:var(--purple);border-color:var(--purple-border)}
+  .sa-rt{background:var(--amber-dim)} .sa-rt .sa-label{color:var(--amber);border-color:var(--amber-border)}
+  .sp { display: inline-block; font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 10px; border: 1px solid; }
+  .sp-green{background:var(--green-dim);color:var(--green);border-color:var(--green-border)}
+  .sp-blue{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-border)}
+  .smp-reqs { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; margin-bottom: 24px; }
+  .smp-req { background: var(--green-dim); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 12px 14px; }
+  .smp-req-title { font-size: 11px; font-weight: 600; color: var(--green); margin-bottom: 3px; }
+  .smp-req-desc { font-size: 11px; color: var(--text2); line-height: 1.4; }
+  .mm-box { background: var(--bg2); border: 1px solid var(--purple-border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 24px; }
+  .mm-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .mm-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .mm-desc { font-size: 12px; color: var(--text2); line-height: 1.6; margin-bottom: 14px; }
+  .mm-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 10px; }
+  .mm-step { background: var(--bg3); border-radius: var(--radius); padding: 12px; }
+  .mm-step-num { font-size: 10px; font-weight: 600; color: var(--purple); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .mm-step-title { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .mm-step-desc { font-size: 11px; color: var(--text2); line-height: 1.4; }
+  .moat { background: var(--purple-dim); border: 1px solid var(--purple-border); border-radius: var(--radius); padding: 14px 16px; font-size: 12px; color: #d4bbff; line-height: 1.6; margin-bottom: 20px; }
+  .moat strong { color: var(--purple); }
+
+  /* AEP */
+  .checklist { display: flex; flex-direction: column; gap: 6px; margin-bottom: 24px; }
+  .chk { display: flex; align-items: flex-start; gap: 12px; padding: 11px 14px; border-radius: var(--radius); background: var(--bg2); border: 1px solid var(--border); transition: border-color 0.15s; }
+  .chk:hover { border-color: var(--border2); }
+  .chk.done { opacity: 0.45; }
+  .chk-box { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--border2); flex-shrink: 0; margin-top: 1px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+  .chk-box:hover { border-color: var(--green); }
+  .chk-box.checked { background: var(--green); border-color: var(--green); }
+  .chk-box.checked::after { content: '✓'; color: #000; font-size: 10px; font-weight: 700; }
+  .chk-text { flex: 1; font-size: 12px; color: var(--text); line-height: 1.5; }
+  .chk.done .chk-text { text-decoration: line-through; color: var(--text3); }
+  .chk-due { font-size: 10px; color: var(--text3); white-space: nowrap; font-family: var(--mono); margin-left: auto; }
+  .progress-bar-wrap { margin-bottom: 24px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text3); margin-bottom: 6px; }
+  .progress-track { height: 4px; background: var(--bg4); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 4px; background: var(--green); border-radius: 2px; transition: width 0.5s ease; }
+
+  /* Competitive */
+  .comp-hero { background: var(--bg2); border: 1px solid var(--purple-border); border-radius: var(--radius-lg); padding: 18px; margin-bottom: 20px; font-size: 13px; color: var(--text2); line-height: 1.7; }
+  .comp-hero strong { color: var(--text); }
+  .vs-grid { display: grid; grid-template-columns: 1fr 60px 1fr; gap: 0; margin-bottom: 20px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); }
+  .vs-header { padding: 12px 16px; }
+  .vs-cf{background:var(--green-dim);border-bottom:1px solid var(--green-border)}
+  .vs-cf .vs-title{color:var(--green);font-weight:600;font-size:13px}
+  .vs-cf .vs-sub{color:rgba(0,212,160,0.6);font-size:11px;margin-top:2px}
+  .vs-comp{background:var(--bg3);border-bottom:1px solid var(--border)}
+  .vs-comp .vs-title{color:var(--text2);font-weight:600;font-size:13px}
+  .vs-comp .vs-sub{color:var(--text3);font-size:11px;margin-top:2px}
+  .vs-mid-header { background: var(--bg4); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; }
+  .vs-mid-header span { font-size: 11px; font-weight: 600; color: var(--text3); }
+  .vs-cell { padding: 10px 16px; font-size: 11px; line-height: 1.5; border-bottom: 1px solid var(--border); }
+  .vs-cell:last-child { border-bottom: none; }
+  .vs-cell-cf{background:rgba(0,212,160,0.04);color:var(--text2)}
+  .vs-cell-comp{background:var(--bg2);color:var(--text3)}
+  .vs-mid-cell { background: var(--bg4); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; padding: 4px; }
+  .vs-mid-cell span { font-size: 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); writing-mode: vertical-rl; }
+  .check { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--green); margin-right: 6px; vertical-align: middle; position: relative; top: -1px; }
+  .cross { display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: var(--bg4); margin-right: 6px; vertical-align: middle; position: relative; top: -1px; }
+  .obj-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-bottom: 20px; }
+  .obj-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; }
+  .obj-q { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .obj-a { font-size: 11px; color: var(--text2); line-height: 1.6; }
+  .pilot-close { background: var(--blue-dim); border: 1px solid var(--blue-border); border-radius: var(--radius); padding: 14px 16px; font-size: 12px; color: #a8d4ff; line-height: 1.6; }
+  .pilot-close strong { color: var(--blue); }
+
+  /* Notion links */
+  .ws-section { margin-bottom: 20px; }
+  .ws-section-title { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .ws-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 8px; }
+  .ws-link { display: block; text-decoration: none; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; transition: all 0.15s; }
+  .ws-link:hover { border-color: var(--green-border); background: var(--green-dim); }
+  .ws-link-title { font-size: 12px; font-weight: 500; color: var(--text); margin-bottom: 2px; }
+  .ws-link-sub { font-size: 10px; color: var(--text3); line-height: 1.4; }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main { padding: 20px 16px; }
+    .metric-row { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .icp-grid, .client-grid, .contacts-grid { grid-template-columns: 1fr; }
+    .mm-grid, .smp-reqs { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .ws-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .obj-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="co">Centerfield Media</div>
+      <div class="name">BD Command Center</div>
+      <div class="sub">MA · Health · ACA · Q2 2026</div>
+      <div class="live-badge"><span class="live-dot"></span><span id="liveStatus">Connecting to Notion...</span></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Dashboard</div>
+      <button class="nav-item active" onclick="showSection('overview',this)"><span class="nav-icon">◈</span> Overview<span class="nav-dot" style="background:var(--green)"></span></button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Pipeline</div>
+      <button class="nav-item" onclick="showSection('pipeline',this)"><span class="nav-icon">≡</span> Prospect scorecard</button>
+      <button class="nav-item" onclick="showSection('icp',this)"><span class="nav-icon">◎</span> ICP tiers & scoring</button>
+      <button class="nav-item" onclick="showSection('contacts',this)"><span class="nav-icon">👤</span> BD contacts<span class="nav-dot" style="background:var(--blue)"></span></button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Clients</div>
+      <button class="nav-item" onclick="showSection('clients',this)"><span class="nav-icon">◉</span> Client health<span class="nav-dot" style="background:var(--amber)"></span></button>
+      <button class="nav-item" onclick="showSection('aep',this)"><span class="nav-icon">✓</span> AEP critical path<span class="nav-dot" style="background:var(--red)"></span></button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Pitch assets</div>
+      <button class="nav-item" onclick="showSection('supply',this)"><span class="nav-icon">⬡</span> Supply map</button>
+      <button class="nav-item" onclick="showSection('competitive',this)"><span class="nav-icon">⚔</span> Competitive positioning</button>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Workspace</div>
+      <button class="nav-item" onclick="showSection('notion',this)"><span class="nav-icon">⊞</span> Notion workspace</button>
+    </div>
+    <div class="sidebar-footer">
+      <strong>Live data</strong>
+      <span id="lastFetched">Loading...</span><br>
+      <span style="color:var(--text3)">Updates on page load · VP Media & Client</span>
+    </div>
+  </nav>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="page-title" id="pageTitle">Overview</div>
+        <div class="page-sub" id="pageSub">Medicare Advantage · Health · ACA · QM & Marketplace</div>
+      </div>
+      <div class="topbar-right">
+        <span class="chip chip-green" id="dataChip"><span class="chip-dot"></span>Loading...</span>
+        <span class="chip chip-amber">AEP prep · Q2 2026</span>
+        <a href="notion://www.notion.so/342cb15b390181b6bd7fde262bf69998" style="text-decoration:none;"><span class="chip chip-dim">Open Notion ↗</span></a>
+      </div>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="sec-overview">
+      <div class="sl">key metrics — live from Notion</div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="ml">Active clients</div><div class="mv" id="m-active">—</div><div class="ms" id="m-active-sub">Loading...</div></div>
+        <div class="metric-card"><div class="ml">Pipeline companies</div><div class="mv" id="m-pipeline">—</div><div class="up" id="m-pipeline-sub">Loading...</div></div>
+        <div class="metric-card"><div class="ml">Priority closes</div><div class="mv" id="m-priority">—</div><div class="ms" id="m-priority-sub">Loading...</div></div>
+        <div class="metric-card"><div class="ml">Est. pipeline rev</div><div class="mv" id="m-rev">—</div><div class="ms">annualized across pipeline</div></div>
+        <div class="metric-card"><div class="ml">AEP agent capacity</div><div class="mv">700</div><div class="up">3.5× SEP baseline</div></div>
+      </div>
+
+      <div class="sl">pipeline funnel — click to filter</div>
+      <div class="funnel" id="funnelBar">
+        <div class="funnel-stage f1" data-stage="Targeted" onclick="filterFunnel(this)"><div class="fn" id="f-target">—</div><div class="fl">Targeted</div></div>
+        <div class="funnel-stage f2" data-stage="Contacted" onclick="filterFunnel(this)"><div class="fn" id="f-contact">—</div><div class="fl">Contacted</div></div>
+        <div class="funnel-stage f3" data-stage="Evaluating" onclick="filterFunnel(this)"><div class="fn" id="f-eval">—</div><div class="fl">Evaluating</div></div>
+        <div class="funnel-stage f4" data-stage="Negotiating" onclick="filterFunnel(this)"><div class="fn" id="f-nego">—</div><div class="fl">Negotiating</div></div>
+        <div class="funnel-stage f5" data-stage="Active client" onclick="filterFunnel(this)"><div class="fn" id="f-active">—</div><div class="fl">Active / Close</div></div>
+      </div>
+
+      <div class="sl">quick pipeline view</div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">Prospect & client scorecard</div><div class="card-sub">Live from Notion · click funnel to filter</div></div>
+          <div class="filter-row" id="tierFilter2">
+            <button class="fbtn on" onclick="filterTier2('all',this)">All</button>
+            <button class="fbtn" onclick="filterTier2('Tier 1 — Core',this)">Tier 1</button>
+            <button class="fbtn" onclick="filterTier2('Tier 2 — Growth',this)">Tier 2</button>
+            <button class="fbtn" onclick="filterTier2('Tier 3 — Emerging',this)">Tier 3</button>
+            <button class="fbtn" onclick="filterTier2('Wholesale — Overflow',this)">Wholesale</button>
+            <button class="fbtn" onclick="filterTier2('active',this)">Active</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Company</th><th>Tier</th><th>Stage</th><th>ICP score</th><th>AEP</th><th>Est. rev/yr</th><th>Owner</th><th>Next action</th></tr></thead><tbody id="scoreBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PIPELINE -->
+    <div class="section" id="sec-pipeline">
+      <div class="sl">full prospect scorecard — live from Notion</div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">All pipeline companies</div><div class="card-sub">Live · updates on page load</div></div>
+          <div class="filter-row" id="tierFilter3">
+            <button class="fbtn on" onclick="filterTier3('all',this)">All</button>
+            <button class="fbtn" onclick="filterTier3('Tier 1 — Core',this)">Tier 1</button>
+            <button class="fbtn" onclick="filterTier3('Tier 2 — Growth',this)">Tier 2</button>
+            <button class="fbtn" onclick="filterTier3('Tier 3 — Emerging',this)">Tier 3</button>
+            <button class="fbtn" onclick="filterTier3('Wholesale — Overflow',this)">Wholesale</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Company</th><th>Tier</th><th>Type</th><th>Stage</th><th>ICP score</th><th>AEP</th><th>Est. rev/yr</th><th>Compliance</th><th>Owner</th><th>Next action</th></tr></thead><tbody id="scoreBody2"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ICP -->
+    <div class="section" id="sec-icp">
+      <div class="sl">ideal client profiles — 4 buyer tiers</div>
+      <div class="icp-grid">
+        <div class="icp-card icp-t1"><div class="icp-badge">Tier 1 — Core</div><div class="icp-name">National MA carriers & FMOs</div><div class="icp-desc">Large-scale, multi-state buyers. 5K+ calls/mo. Full compliance infra. AEP + SEP dual commitment.</div><div class="icp-tags"><span class="icp-tag">Centene</span><span class="icp-tag">AmeriLife</span><span class="icp-tag">Integrity MG</span><span class="icp-tag">GoHealth</span><span class="icp-tag">SelectQuote</span></div><div class="icp-meta"><strong style="color:var(--green)">Min score: 80+</strong> · Executive-led · AHIP/NABIP · AEP 700-agent pitch</div></div>
+        <div class="icp-card icp-t2"><div class="icp-badge">Tier 2 — Growth</div><div class="icp-name">Regional BPOs & call center ops</div><div class="icp-desc">Licensed in 5–15 states. 50–500 agents. AEP seasonal scale. Trial program wedge.</div><div class="icp-tags"><span class="icp-tag">HealthMarkets</span><span class="icp-tag">National General</span><span class="icp-tag">Chapter Medicare</span><span class="icp-tag">TZ Insurance</span></div><div class="icp-meta"><strong style="color:var(--blue)">Min score: 60–79</strong> · BD team · LinkedIn · 500-call pilot offer</div></div>
+        <div class="icp-card icp-t3"><div class="icp-badge">Tier 3 — Emerging</div><div class="icp-name">IMO aggregators & indie groups</div><div class="icp-desc">Multi-agent retail brokerages and IMOs. Consolidate retail indie base into structured IMO relationships.</div><div class="icp-tags"><span class="icp-tag">Senior Mkt Sales</span><span class="icp-tag">PHP Agency</span><span class="icp-tag">NABIP clusters</span></div><div class="icp-meta"><strong style="color:var(--amber)">Min score: 40–59</strong> · IMO networks · NABIP warm intros</div></div>
+        <div class="icp-card icp-ws"><div class="icp-badge">Wholesale — Overflow</div><div class="icp-name">Volume media buffer buyers</div><div class="icp-desc">Absorbs excess media when QM agents at ceiling. Lower CPL/CPA + guaranteed volume floor.</div><div class="icp-tags"><span class="icp-tag">Enroll Here</span><span class="icp-tag">compliance review</span></div><div class="icp-meta"><strong style="color:var(--purple)">Volume floor</strong> replaces score · Compliance-first · Position 4 routing</div></div>
+      </div>
+      <div class="sl">ICP scoring model — 100 pts max</div>
+      <div class="card"><div style="overflow-x:auto;"><table><thead><tr><th>Criteria</th><th>Weight</th><th style="min-width:140px;">Score bar</th><th>Notes</th></tr></thead><tbody>
+        <tr><td>Licensed in top MA states (FL, TX, CA, OH, PA)</td><td><span style="font-family:var(--mono);font-weight:600;color:var(--green)">25 pts</span></td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:100%;background:var(--green)"></div></div></div></td><td style="font-size:11px;color:var(--text3)">Hard req. for Tier 1</td></tr>
+        <tr><td>IB call volume appetite &gt;1K/mo</td><td><span style="font-family:var(--mono);font-weight:600;color:var(--blue)">20 pts</span></td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:80%;background:var(--blue)"></div></div></div></td><td style="font-size:11px;color:var(--text3)">Min pipeline threshold</td></tr>
+        <tr><td>Existing TCPA/compliance framework</td><td><span style="font-family:var(--mono);font-weight:600;color:var(--blue)">20 pts</span></td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:80%;background:var(--blue)"></div></div></div></td><td style="font-size:11px;color:var(--text3)">Non-negotiable post-2024</td></tr>
+        <tr><td>AEP + SEP dual-season buying commitment</td><td><span style="font-family:var(--mono);font-weight:600;color:var(--amber)">15 pts</span></td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:60%;background:var(--amber)"></div></div></div></td><td style="font-size:11px;color:var(--text3)">AEP scale is key pitch</td></tr>
+        <tr><td>CRM/tech for call disposition & reporting</td><td><span style="font-family:var(--mono);font-weight:600;color:var(--amber)">10 pts</span></td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:40%;background:var(--amber)"></div></div></div></td><td style="font-size:11px;color:var(--text3)">Reduces QM ops burden</td></tr>
+        <tr><td>ACA / dual-eligible cross-sell capability</td><td><span style="font-family:var(--mono);font-weight:600;color:var(--purple)">10 pts</span></td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:40%;background:var(--purple)"></div></div></div></td><td style="font-size:11px;color:var(--text3)">Expansion revenue signal</td></tr>
+      </tbody></table></div></div>
+    </div>
+
+    <!-- CONTACTS -->
+    <div class="section" id="sec-contacts">
+      <div class="sl">BD contacts — live from Notion</div>
+      <div class="filter-row" style="margin-bottom:14px;" id="contactFilter">
+        <button class="fbtn on" onclick="filterContacts('all',this)">All</button>
+        <button class="fbtn" onclick="filterContacts('Not contacted',this)">Not contacted</button>
+        <button class="fbtn" onclick="filterContacts('Touch 1 sent',this)">Touched</button>
+        <button class="fbtn" onclick="filterContacts('Responded',this)">Responded</button>
+        <button class="fbtn" onclick="filterContacts('Meeting booked',this)">Meeting booked</button>
+        <button class="fbtn" onclick="filterContacts('VP Media',this)">VP Media</button>
+        <button class="fbtn" onclick="filterContacts('BD Lead',this)">BD Lead</button>
+      </div>
+      <div class="contacts-grid" id="contactsGrid"></div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="section" id="sec-clients">
+      <div class="sl">4 active client relationships</div>
+      <div class="client-grid">
+        <div class="client-card"><div class="client-header"><div><div class="client-name">Centene</div><div class="client-sub">Tier 1 · National MA carrier · $1.2M est. annual rev</div></div><span class="pill p-active">Active</span></div><div class="bar-wrap"><div class="bar-labels"><span>Call utilization</span><span style="color:var(--green)">74%</span></div><div class="bar-track"><div class="bar-fill" style="width:74%;background:var(--green)"></div></div></div><div class="bar-wrap"><div class="bar-labels"><span>AEP readiness</span><span style="color:var(--blue)">60%</span></div><div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--blue)"></div></div></div><div class="client-opp opp-green">AEP volume commit (+40%) · D-SNP dedicated line · ACA cross-sell FL/TX/CA<br><strong>Next:</strong> AEP planning call Apr 30 · Volume commitment May 30</div></div>
+        <div class="client-card"><div class="client-header"><div><div class="client-name">AmeriLife</div><div class="client-sub">Tier 1 · National FMO · $900K est. annual rev</div></div><span class="pill p-active">Active</span></div><div class="bar-wrap"><div class="bar-labels"><span>Call utilization</span><span style="color:var(--amber)">61%</span></div><div class="bar-track"><div class="bar-fill" style="width:61%;background:var(--amber)"></div></div></div><div class="bar-wrap"><div class="bar-labels"><span>AEP readiness</span><span style="color:var(--amber)">45%</span></div><div class="bar-track"><div class="bar-fill" style="width:45%;background:var(--amber)"></div></div></div><div class="client-opp opp-amber">⚠ Most at-risk for AEP. 61%→80% util = +$350K. Diagnose gap now.<br><strong>Next:</strong> Ops diagnostic call Apr 25 · AEP plan May 30</div></div>
+        <div class="client-card"><div class="client-header"><div><div class="client-name">Enroll Here</div><div class="client-sub">Wholesale · Volume overflow buyer · $600K est.</div></div><span class="pill p-compliance">Compliance review</span></div><div class="bar-wrap"><div class="bar-labels"><span>Compliance progress</span><span style="color:var(--purple)">~40%</span></div><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--purple)"></div></div></div><div class="bar-wrap"><div class="bar-labels"><span>Contract status</span><span style="color:var(--text3)">0%</span></div><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--purple)"></div></div></div><div class="client-opp opp-purple">Critical path. Media monetization buffer — absorbs overflow at AEP scale.<br><strong>Next:</strong> Compliance May 15 · Contract June 1</div></div>
+        <div class="client-card"><div class="client-header"><div><div class="client-name">Retail indie agents</div><div class="client-sub">Tier 3 · Aggregated retail · $120K est. annual rev</div></div><span class="pill p-active">Active</span></div><div class="bar-wrap"><div class="bar-labels"><span>Call utilization</span><span style="color:var(--red)">38%</span></div><div class="bar-track"><div class="bar-fill" style="width:38%;background:var(--red)"></div></div></div><div class="bar-wrap"><div class="bar-labels"><span>AEP readiness</span><span style="color:var(--red)">30%</span></div><div class="bar-track"><div class="bar-fill" style="width:30%;background:var(--red)"></div></div></div><div class="client-opp opp-amber">Consolidate into IMO aggregator model. Senior Market Sales is the vehicle.<br><strong>Next:</strong> IMO aggregator pitch May 20</div></div>
+      </div>
+    </div>
+
+    <!-- AEP -->
+    <div class="section" id="sec-aep">
+      <div class="sl">AEP critical path — all items needed before Sept 1</div>
+      <div class="progress-bar-wrap"><div class="progress-label"><span id="progressLabel">0 of 12 complete</span><span id="progressPct">0%</span></div><div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div></div>
+      <div class="checklist">
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>700-agent capacity messaging</strong> in all active BD pitches</div><div class="chk-due">Apr 30</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>AmeriLife</strong> utilization gap diagnostic call scheduled</div><div class="chk-due">Apr 25</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Integrity MG</strong> Touch 1 LinkedIn outreach sent</div><div class="chk-due">Apr 18</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>GoHealth</strong> VP Media contact identified + Touch 1 sent</div><div class="chk-due">Apr 18</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Centene</strong> AEP planning call completed</div><div class="chk-due">Apr 30</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Enroll Here</strong> compliance review complete → contract executed</div><div class="chk-due">June 1</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Centene</strong> AEP volume commitment (+40%) locked in writing</div><div class="chk-due">May 30</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>AmeriLife</strong> AEP agent onboarding plan aligned</div><div class="chk-due">May 30</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Integrity MG</strong> contract closed pre-Q3</div><div class="chk-due">June 1</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Senior Market Sales</strong> IMO aggregator pitch completed</div><div class="chk-due">May 20</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text"><strong>Tier 2</strong> trial call program live — 2 new buyers active</div><div class="chk-due">June 30</div></div>
+        <div class="chk"><div class="chk-box" onclick="toggleChk(this)"></div><div class="chk-text">All active clients confirmed at <strong>100% AEP readiness</strong></div><div class="chk-due">Sept 1</div></div>
+      </div>
+    </div>
+
+    <!-- SUPPLY -->
+    <div class="section" id="sec-supply">
+      <div class="sl">supply architecture — how calls are born</div>
+      <div class="supply-arch">
+        <div class="sa-row sa-smp"><div class="sa-label">Strategic Media<br>Partners (SMPs)</div><div class="sa-body"><span class="sp sp-green">Deeper relationships</span><span class="sp sp-green">Solid tech</span><span class="sp sp-green">Proven AEP scale</span><span class="sp sp-green">Strategic alignment</span><span style="color:rgba(0,212,160,0.5)">— curated subset · highest trust · pre-committed Q4 volume</span></div></div>
+        <div class="sa-row sa-mp"><div class="sa-label">Broader Media<br>Partner Network</div><div class="sa-body"><span class="sp sp-blue">Paid search</span><span class="sp sp-blue">Paid social</span><span class="sp sp-blue">Direct mail</span><span class="sp sp-blue">TV / streaming</span><span class="sp sp-blue">Display / native</span><span class="sp sp-blue">SEO / content</span><span class="sp sp-blue">Email</span><span class="sp sp-blue">Radio / podcast</span></div></div>
+        <div class="sa-row sa-mm"><div class="sa-label">Media Match<br>AI Engine</div><div class="sa-body" style="color:rgba(167,139,250,0.7);font-size:12px;line-height:1.6;">AI + deep call history + industry expertise → matches media sources to client demand profiles → routes the exact consumer each client wants · self-optimizing via QM agent disposition feedback loop</div></div>
+        <div class="sa-row sa-rt"><div class="sa-label">Inbound Call<br>Routing</div><div class="sa-body" style="color:rgba(245,166,35,0.7);font-size:12px;line-height:1.6;">QM 700 agents (AEP) → Marketplace T1/T2 buyers → Overflow to Enroll Here · Real-time state-match + product filter + time-of-day optimization</div></div>
+      </div>
+      <div class="sl">SMP requirements</div>
+      <div class="smp-reqs">
+        <div class="smp-req"><div class="smp-req-title">Solid tech capabilities</div><div class="smp-req-desc">API integration · real-time call tracking · dynamic routing · reporting infrastructure</div></div>
+        <div class="smp-req"><div class="smp-req-title">Proven AEP scale</div><div class="smp-req-desc">Can ramp volume 3–5× for Q4 without quality degradation</div></div>
+        <div class="smp-req"><div class="smp-req-title">Strategic alignment</div><div class="smp-req-desc">Joint planning · market development · shared roadmaps · not transactional</div></div>
+        <div class="smp-req"><div class="smp-req-title">Compliance posture</div><div class="smp-req-desc">TCPA-clean · full consent chain · call recording · audit-ready</div></div>
+        <div class="smp-req"><div class="smp-req-title">Quality consistency</div><div class="smp-req-desc">Holds contact rate + conversion benchmarks across SEP and AEP</div></div>
+        <div class="smp-req"><div class="smp-req-title">Width & depth</div><div class="smp-req-desc">Multi-channel · multi-campaign · not single-source transactional</div></div>
+      </div>
+      <div class="sl">Media Match — AI matching engine</div>
+      <div class="mm-box">
+        <div class="mm-header"><div class="mm-title">Media Match</div><span class="chip" style="background:var(--purple-dim);color:var(--purple);border-color:var(--purple-border)">AI-powered</span><span class="chip chip-dim">Centerfield proprietary</span></div>
+        <div class="mm-desc">Centerfield's proprietary AI engine combines machine learning, deep inbound call history, and industry expertise to strategically align media sources with client demand profiles — ensuring every buyer receives the exact consumer they want, in the markets they operate, at the volume they need.</div>
+        <div class="mm-grid">
+          <div class="mm-step"><div class="mm-step-num">Input 1</div><div class="mm-step-title">Client demand profile</div><div class="mm-step-desc">State footprint · plan types · agent capacity · routing preferences · conversion benchmarks</div></div>
+          <div class="mm-step"><div class="mm-step-num">Input 2</div><div class="mm-step-title">Deep call history</div><div class="mm-step-desc">Quality + contact rates by media source, channel, geo, and time of day across all seasons</div></div>
+          <div class="mm-step"><div class="mm-step-num">Input 3</div><div class="mm-step-title">QM feedback loop</div><div class="mm-step-desc">700 agents handling same call types → live disposition data continuously improves the model</div></div>
+          <div class="mm-step"><div class="mm-step-num">Output 1</div><div class="mm-step-title">Strategic allocation</div><div class="mm-step-desc">AI weights each SMP and channel by predicted performance for buyer's demand profile</div></div>
+          <div class="mm-step"><div class="mm-step-num">Output 2</div><div class="mm-step-title">Real-time routing</div><div class="mm-step-desc">Calls route to highest-matched buyer dynamically — state, product, time, intent all factored</div></div>
+          <div class="mm-step"><div class="mm-step-num">Output 3</div><div class="mm-step-title">Continuous improvement</div><div class="mm-step-desc">Disposition data feeds back — quality improves over the life of every client relationship</div></div>
+        </div>
+      </div>
+      <div class="moat"><strong>The supply-side competitive moat:</strong> SMPs that scale and are strategically aligned + Media Match AI that matches media to each buyer's exact demand profile + 700 QM agents creating a live feedback loop that makes every future call smarter.</div>
+    </div>
+
+    <!-- COMPETITIVE -->
+    <div class="section" id="sec-competitive">
+      <div class="sl">why Centerfield over your current call vendors</div>
+      <div class="comp-hero">Your current vendors give you calls. Centerfield gives you <strong>in-funnel, consumer-initiated calls</strong> at <strong>AEP scale</strong> — with a <strong>700-agent quality filter</strong> validating every call type before it ever reaches your agents.<br><br>Use when prospects say: <em>"We already have call sources"</em> · Applies to GoHealth · SelectQuote · HealthMarkets · any active T1/T2 conversation</div>
+      <div class="sl">head-to-head comparison</div>
+      <div class="vs-grid">
+        <div class="vs-header vs-cf"><div class="vs-title">Centerfield Media</div><div class="vs-sub">QM + Marketplace · 700 AEP agents</div></div>
+        <div class="vs-mid-header"><span>vs</span></div>
+        <div class="vs-header vs-comp"><div class="vs-title">Typical call / lead vendor</div><div class="vs-sub">Recycled leads · outbound · aged data</div></div>
+        <div class="vs-cell vs-cell-cf"><span class="check"></span>100% consumer-initiated inbound calls</div><div class="vs-mid-cell"><span>call source</span></div><div class="vs-cell vs-cell-comp"><span class="cross"></span>Mix of outbound, recycled, aged leads</div>
+        <div class="vs-cell vs-cell-cf"><span class="check"></span>In-funnel media sourcing — actively shopping</div><div class="vs-mid-cell"><span>intent</span></div><div class="vs-cell vs-cell-comp"><span class="cross"></span>Variable — often interrupted or re-marketed</div>
+        <div class="vs-cell vs-cell-cf"><span class="check"></span>700 QM agents validate every call type at AEP</div><div class="vs-mid-cell"><span>quality</span></div><div class="vs-cell vs-cell-comp"><span class="cross"></span>No internal validation — calls route direct</div>
+        <div class="vs-cell vs-cell-cf"><span class="check"></span>TCPA-certified · full consent chain · recording</div><div class="vs-mid-cell"><span>compliance</span></div><div class="vs-cell vs-cell-comp"><span class="cross"></span>Compliance varies — buyer assumes risk</div>
+        <div class="vs-cell vs-cell-cf"><span class="check"></span>700 agents AEP · consistent high-volume flow</div><div class="vs-mid-cell"><span>AEP scale</span></div><div class="vs-cell vs-cell-comp"><span class="cross"></span>Volume spikes unpredictable — no AEP infra</div>
+        <div class="vs-cell vs-cell-cf"><span class="check"></span>Real-time · state-matched · product-filtered</div><div class="vs-mid-cell"><span>routing</span></div><div class="vs-cell vs-cell-comp"><span class="cross"></span>Static routing — limited customization</div>
+        <div class="vs-cell vs-cell-cf" style="border-bottom:none;"><span class="check"></span>Full disposition data · recording · weekly reports</div><div class="vs-mid-cell" style="border-bottom:none;"><span>reporting</span></div><div class="vs-cell vs-cell-comp" style="border-bottom:none;"><span class="cross"></span>Basic call counts — limited transparency</div>
+      </div>
+      <div class="sl">objection handling</div>
+      <div class="obj-grid">
+        <div class="obj-card"><div class="obj-q">"We already have call sources."</div><div class="obj-a">We're not replacing your sources — we're supplementing with incremental AEP volume your agents aren't getting today. Can your current sources scale 3–4× for Q4? Ours can. Want to run a 500-call pilot to compare quality side-by-side?</div></div>
+        <div class="obj-card"><div class="obj-q">"Your calls are more expensive."</div><div class="obj-a">Our CPL reflects intent quality — these are in-funnel consumers, not recycled leads. The conversion rate difference pays for itself. We can model your current CPA against ours. What's your current cost per enrollment?</div></div>
+        <div class="obj-card"><div class="obj-q">"We're happy with what we have."</div><div class="obj-a">Then this is about adding a high-quality second source for AEP, not replacing anything. When your primary source can't keep pace with your 700+ agent capacity in October, you need a backup with volume. That's exactly what we offer.</div></div>
+        <div class="obj-card"><div class="obj-q">"How are you different from [Competitor X]?"</div><div class="obj-a">The key difference is the 700-agent QM operation. We don't just source and route calls — we run 700 licensed agents who validate every call type before it reaches you. That quality layer is unique to Centerfield.</div></div>
+        <div class="obj-card"><div class="obj-q">"We need to check compliance."</div><div class="obj-a">We'll walk your compliance team through our TCPA documentation, consent chain, and call recording in one 30-minute meeting. We cleared compliance with Centene and AmeriLife — same package. Let's get that on the calendar.</div></div>
+        <div class="obj-card"><div class="obj-q">"The timing isn't right."</div><div class="obj-a">AEP is the right time — it's when your agents have the most capacity to take high-intent calls. The onboarding window closes end of Q2. Compliance + routing + testing take 4–6 weeks. Start now or miss the AEP ramp.</div></div>
+      </div>
+      <div class="sl">the pilot close</div>
+      <div class="pilot-close"><strong>The offer:</strong> "Let us run a 500-call paid pilot at a preferred rate. You get full call recording, disposition data, and conversion reporting — no long-term commitment. If the quality is there, we talk AEP volume. If not, you've spent almost nothing. This is exactly how we started with Centene and AmeriLife."</div>
+    </div>
+
+    <!-- NOTION -->
+    <div class="section" id="sec-notion">
+      <div class="sl">pipeline & tracking</div>
+      <div class="ws-section"><div class="ws-grid">
+        <a class="ws-link" href="notion://www.notion.so/342cb15b390181b6bd7fde262bf69998"><div class="ws-link-title">🎯 BD Hub</div><div class="ws-link-sub">Master strategy · ICP framework · AEP checklist</div></a>
+        <a class="ws-link" href="notion://www.notion.so/25712978644743ffa1b65794fcb4c807"><div class="ws-link-title">🏗️ Pipeline tracker</div><div class="ws-link-sub">15 companies · all tiers · filterable</div></a>
+        <a class="ws-link" href="notion://www.notion.so/2040e91b591349228f52c82073a4c261"><div class="ws-link-title">👤 BD contacts</div><div class="ws-link-sub">19 decision-maker contacts · outreach status</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b3901815a9279c6ed4ecdbba9"><div class="ws-link-title">📅 90-day sprint plan</div><div class="ws-link-sub">Q2/Q3 execution · weekly tasks · KPIs</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b39018191ba1ce570613e59aa"><div class="ws-link-title">📊 Weekly BD review</div><div class="ws-link-sub">Template · duplicate every Monday</div></a>
+      </div></div>
+      <div class="sl">client optimization</div>
+      <div class="ws-section"><div class="ws-grid">
+        <a class="ws-link" href="notion://www.notion.so/342cb15b390181af923bff2e4ba547e4"><div class="ws-link-title">🏢 Centene</div><div class="ws-link-sub">AEP expansion · D-SNP · growth plan</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b3901814db6bcde22be6c373b"><div class="ws-link-title">🏢 AmeriLife</div><div class="ws-link-sub">Utilization gap · AEP onboarding</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b390181ec9d1bcf5f95106c64"><div class="ws-link-title">🔄 Enroll Here — wholesale</div><div class="ws-link-sub">Compliance track · contract terms</div></a>
+      </div></div>
+      <div class="sl">playbooks & pitch assets</div>
+      <div class="ws-section"><div class="ws-grid">
+        <a class="ws-link" href="notion://www.notion.so/342cb15b3901813e9768e47a6f286568"><div class="ws-link-title">📞 T1 outreach playbook</div><div class="ws-link-sub">Integrity MG & GoHealth · 5-touch sequences</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b39018141b6d2d6aa71058c80"><div class="ws-link-title">🔄 Enroll Here deal framework</div><div class="ws-link-sub">Pricing · volume floor · routing logic</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b39018112aa42d06f1eeec143"><div class="ws-link-title">📈 AEP expansion plan</div><div class="ws-link-sub">Centene & AmeriLife 200→700 ramp</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b39018127aae2d852d5c77d1a"><div class="ws-link-title">🎯 Pitch deck framework</div><div class="ws-link-sub">T1 FMO pitch · 10-slide deck · talk track</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b390181b3b99ec4f942c18d6c"><div class="ws-link-title">⚔️ Competitive positioning</div><div class="ws-link-sub">vs. existing vendors · objections · pilot close</div></a>
+        <a class="ws-link" href="notion://www.notion.so/342cb15b390181ccaf2bef15558f37e5"><div class="ws-link-title">🗺️ Media supply map</div><div class="ws-link-sub">SMPs · channels · Media Match AI</div></a>
+      </div></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ─── State ───────────────────────────────────────────
+let allPipeline = [];
+let allContacts = [];
+let stageFilter = null;
+let tierFilter2Val = 'all';
+let tierFilter3Val = 'all';
+let contactFilterVal = 'all';
+
+// ─── Notion fetch ─────────────────────────────────────
+async function fetchNotionData() {
+  try {
+    const res = await fetch('/api/notion-data');
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    allPipeline = data.pipeline || [];
+    allContacts = data.contacts || [];
+    const ts = new Date(data.lastFetched);
+    document.getElementById('lastFetched').textContent = ts.toLocaleTimeString();
+    document.getElementById('liveStatus').textContent = 'Live — Notion connected';
+    document.getElementById('dataChip').innerHTML = '<span class="chip-dot"></span>Live · Notion';
+    updateMetrics();
+    renderAll();
+  } catch (err) {
+    document.getElementById('liveStatus').textContent = 'Offline — using cached data';
+    document.getElementById('lastFetched').textContent = 'Could not connect';
+    document.getElementById('dataChip').innerHTML = '<span class="chip-dot" style="background:var(--amber)"></span>Cached data';
+    useFallbackData();
+    updateMetrics();
+    renderAll();
+  }
+}
+
+// ─── Fallback static data ─────────────────────────────
+function useFallbackData() {
+  allPipeline = [
+    {co:'Centene',tier:'Tier 1 — Core',type:'National MA carrier',stage:'Active client',score:95,aep:'Yes',rev:1200,owner:'VP Media',action:'Lock AEP volume commit +40%',compliance:'Verified',url:'https://www.notion.so/342cb15b390181dc870fc0ca0f0ec01a'},
+    {co:'AmeriLife',tier:'Tier 1 — Core',type:'National FMO',stage:'Active client',score:90,aep:'Yes',rev:900,owner:'VP Media',action:'AEP onboarding plan alignment',compliance:'Verified',url:'https://www.notion.so/342cb15b390181ab921ef2550978b0dc'},
+    {co:'Enroll Here',tier:'Wholesale — Overflow',type:'Volume wholesale buyer',stage:'Evaluating',score:85,aep:'Yes',rev:600,owner:'VP Media',action:'Complete compliance → contract',compliance:'In review',url:'https://www.notion.so/342cb15b3901814f831ee6b2230ac634'},
+    {co:'Retail indie',tier:'Tier 3 — Emerging',type:'Retail indie',stage:'Active client',score:42,aep:'TBD',rev:120,owner:'AE',action:'Migrate to IMO model',compliance:'Verified',url:''},
+    {co:'Integrity MG',tier:'Tier 1 — Core',type:'National FMO',stage:'Negotiating',score:92,aep:'Yes',rev:1500,owner:'VP Media',action:'Accelerate to contract pre-Q3',compliance:'Not started',url:'https://www.notion.so/342cb15b39018103bf28f0afcab24670'},
+    {co:'GoHealth',tier:'Tier 1 — Core',type:'Digital FMO',stage:'Evaluating',score:88,aep:'Yes',rev:1100,owner:'VP Media',action:'VP-level meeting + AEP deck',compliance:'Not started',url:'https://www.notion.so/342cb15b390181589a51f3825f867d4c'},
+    {co:'SelectQuote',tier:'Tier 1 — Core',type:'National FMO',stage:'Contacted',score:85,aep:'Yes',rev:800,owner:'BD Lead',action:'Send intro deck',compliance:'Not started',url:''},
+    {co:'eHealth',tier:'Tier 1 — Core',type:'Digital FMO',stage:'Targeted',score:87,aep:'Yes',rev:950,owner:'VP Media',action:'Identify contact via AHIP/NABIP',compliance:'Not started',url:''},
+    {co:'Mutual of Omaha',tier:'Tier 1 — Core',type:'National MA carrier',stage:'Contacted',score:82,aep:'Yes',rev:700,owner:'BD Lead',action:'Send Centene case study',compliance:'Not started',url:''},
+    {co:'HealthMarkets',tier:'Tier 2 — Growth',type:'Call center operator',stage:'Evaluating',score:72,aep:'Yes',rev:400,owner:'BD Lead',action:'500-call pilot proposal',compliance:'Not started',url:''},
+    {co:'Chapter Medicare',tier:'Tier 2 — Growth',type:'Digital FMO',stage:'Contacted',score:65,aep:'TBD',rev:250,owner:'AE',action:'Qualify volume appetite',compliance:'Not started',url:''},
+    {co:'National General',tier:'Tier 2 — Growth',type:'Regional BPO/TPA',stage:'Evaluating',score:68,aep:'TBD',rev:300,owner:'BD Lead',action:'ACA/Health pitch + eval call',compliance:'Not started',url:''},
+    {co:'TZ Insurance',tier:'Tier 2 — Growth',type:'Call center operator',stage:'Targeted',score:60,aep:'TBD',rev:150,owner:'AE',action:'LinkedIn outreach',compliance:'Not started',url:''},
+    {co:'Senior Mkt Sales',tier:'Tier 3 — Emerging',type:'IMO / aggregator',stage:'Contacted',score:58,aep:'Yes',rev:200,owner:'AE',action:'IMO aggregator pitch',compliance:'Not started',url:''},
+    {co:'PHP Agency',tier:'Tier 3 — Emerging',type:'IMO / aggregator',stage:'Targeted',score:45,aep:'TBD',rev:100,owner:'AE',action:'IMO network outreach',compliance:'Not started',url:''},
+  ];
+}
+
+// ─── Metrics ──────────────────────────────────────────
+function updateMetrics() {
+  const active = allPipeline.filter(p => p.stage === 'Active client');
+  const priority = allPipeline.filter(p => p.stage === 'Negotiating');
+  const totalRev = allPipeline.reduce((s, p) => s + (p.rev || 0), 0);
+  document.getElementById('m-active').textContent = active.length;
+  document.getElementById('m-active-sub').textContent = active.map(p => p.co).join(' · ');
+  document.getElementById('m-pipeline').textContent = allPipeline.length;
+  document.getElementById('m-pipeline-sub').textContent = '▲ Actively tracked';
+  document.getElementById('m-priority').textContent = priority.length;
+  document.getElementById('m-priority-sub').textContent = priority.map(p => p.co).join(' · ') || '—';
+  document.getElementById('m-rev').textContent = '$' + (totalRev / 1000).toFixed(1) + 'M';
+
+  // Funnel counts
+  const stages = ['Targeted','Contacted','Evaluating','Negotiating','Active client'];
+  const ids = ['f-target','f-contact','f-eval','f-nego','f-active'];
+  stages.forEach((s, i) => {
+    const count = allPipeline.filter(p => p.stage === s).length;
+    document.getElementById(ids[i]).textContent = count;
+  });
+}
+
+// ─── Tier/stage helpers ───────────────────────────────
+function tierKey(tier) {
+  if (!tier) return 'row-t1';
+  if (tier.includes('Tier 1')) return 'row-t1';
+  if (tier.includes('Tier 2')) return 'row-t2';
+  if (tier.includes('Tier 3')) return 'row-t3';
+  if (tier.includes('Wholesale')) return 'row-ws';
+  return 'row-t1';
+}
+function tierDotClass(tier) {
+  if (!tier) return 'dot-t1';
+  if (tier.includes('Tier 1')) return 'dot-t1';
+  if (tier.includes('Tier 2')) return 'dot-t2';
+  if (tier.includes('Tier 3')) return 'dot-t3';
+  if (tier.includes('Wholesale')) return 'dot-ws';
+  return 'dot-t1';
+}
+function tierShort(tier) {
+  if (!tier) return '—';
+  if (tier.includes('Tier 1')) return 'Tier 1';
+  if (tier.includes('Tier 2')) return 'Tier 2';
+  if (tier.includes('Tier 3')) return 'Tier 3';
+  if (tier.includes('Wholesale')) return 'Wholesale';
+  return tier;
+}
+function stagePill(stage) {
+  const m = {
+    'Active client': 'p-active', 'Evaluating': 'p-eval',
+    'Negotiating': 'p-nego', 'Contacted': 'p-contact',
+    'Targeted': 'p-target', 'Closing': 'p-nego',
+  };
+  return m[stage] || 'p-target';
+}
+function compliancePill(c) {
+  const m = {'Verified':'p-active','In review':'p-compliance','Not started':'p-target','Issue flagged':'p-compliance'};
+  return m[c] || 'p-target';
+}
+function formatRev(r) {
+  if (!r) return '—';
+  if (r >= 1000) return '$' + (r/1000).toFixed(1) + 'M';
+  return '$' + r + 'K';
+}
+
+// ─── Pipeline table ───────────────────────────────────
+function buildRow(p, showType = false, showCompliance = false) {
+  const pct = p.score || 0;
+  const sc = pct >= 80 ? 'var(--green)' : pct >= 60 ? 'var(--amber)' : 'var(--red)';
+  const aepC = p.aep === 'Yes' ? 'color:var(--green);font-weight:500' : p.aep === 'TBD' ? 'color:var(--amber)' : '';
+  const notionCell = p.url ? `<a class="notion-link" href="notion://www.notion.so/${p.url.split('/').pop()}" title="Open in Notion">↗</a>` : '';
+  return `<tr class="${tierKey(p.tier)}">
+    <td><span class="co-name">${p.co}</span> ${notionCell}</td>
+    <td><span class="tier-dot ${tierDotClass(p.tier)}"></span><span style="font-size:11px;color:var(--text2)">${tierShort(p.tier)}</span></td>
+    ${showType ? `<td style="font-size:11px;color:var(--text3)">${p.type || '—'}</td>` : ''}
+    <td><span class="pill ${stagePill(p.stage)}">${p.stage || '—'}</span></td>
+    <td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:${pct}%;background:${sc}"></div></div><span class="sb-num" style="color:${sc}">${pct}</span></div></td>
+    <td style="font-size:11px;${aepC}">${p.aep || '—'}</td>
+    <td><span class="rev">${formatRev(p.rev)}</span></td>
+    ${showCompliance ? `<td><span class="pill ${compliancePill(p.compliance)}" style="font-size:10px;">${p.compliance || '—'}</span></td>` : ''}
+    <td><span class="owner-tag">${p.owner || '—'}</span></td>
+    <td><span class="action-text">${p.action || '—'}</span></td>
+  </tr>`;
+}
+
+function renderTable(bodyId, tierVal, stageVal, showType = false, showCompliance = false) {
+  let rows = [...allPipeline];
+  if (stageVal) rows = rows.filter(p => p.stage === stageVal);
+  if (tierVal === 'active') rows = rows.filter(p => p.stage === 'Active client');
+  else if (tierVal !== 'all') rows = rows.filter(p => p.tier === tierVal);
+  document.getElementById(bodyId).innerHTML = rows.length
+    ? rows.map(p => buildRow(p, showType, showCompliance)).join('')
+    : `<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--text3)">No companies match this filter</td></tr>`;
+}
+
+// ─── Contacts ─────────────────────────────────────────
+function statusDotClass(status) {
+  if (!status) return 'st-none';
+  if (status.includes('Touch') || status === 'Contacted') return 'st-contacted';
+  if (['Responded','Meeting booked','In discussion'].includes(status)) return 'st-responded';
+  if (status === 'Unresponsive') return 'st-unresponsive';
+  return 'st-none';
+}
+
+function renderContacts(filterVal) {
+  let contacts = [...allContacts];
+  if (filterVal !== 'all') {
+    if (['VP Media','BD Lead','AE'].includes(filterVal)) {
+      contacts = contacts.filter(c => c.owner === filterVal);
+    } else {
+      contacts = contacts.filter(c => {
+        if (filterVal === 'Touch 1 sent') return c.status && c.status.includes('Touch');
+        return c.status === filterVal;
+      });
+    }
+  }
+  document.getElementById('contactsGrid').innerHTML = contacts.length
+    ? contacts.map(c => `
+      <div class="contact-card">
+        <div class="contact-name">${c.name || '—'}</div>
+        <div class="contact-title">${c.title || '—'} · ${c.company || '—'}</div>
+        <div class="contact-meta">
+          <div class="contact-row"><span class="status-dot ${statusDotClass(c.status)}"></span><span>${c.status || 'Not contacted'}</span></div>
+          ${c.role ? `<div class="contact-row" style="color:var(--text3)">${c.role}</div>` : ''}
+          ${c.nextAction ? `<div class="contact-row" style="font-size:10px;color:var(--text3);margin-top:4px;">${c.nextAction.substring(0,80)}${c.nextAction.length > 80 ? '…' : ''}</div>` : ''}
+          ${c.linkedin ? `<div class="contact-row"><a href="${c.linkedin}" target="_blank" style="font-size:10px;color:var(--blue);text-decoration:none;">LinkedIn ↗</a></div>` : ''}
+          ${c.nextTouch ? `<div class="contact-row" style="font-size:10px;color:var(--text3);">Next touch: ${c.nextTouch}</div>` : ''}
+        </div>
+      </div>`).join('')
+    : `<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text3)">No contacts match this filter</div>`;
+}
+
+// ─── Filter functions ─────────────────────────────────
+function filterFunnel(el) {
+  const s = el.dataset.stage;
+  if (stageFilter === s) {
+    stageFilter = null;
+    document.querySelectorAll('.funnel-stage').forEach(f => f.classList.remove('active-f'));
+  } else {
+    stageFilter = s;
+    document.querySelectorAll('.funnel-stage').forEach(f => f.classList.remove('active-f'));
+    el.classList.add('active-f');
+  }
+  renderTable('scoreBody', tierFilter2Val, stageFilter);
+}
+function filterTier2(t, btn) {
+  tierFilter2Val = t;
+  document.querySelectorAll('#tierFilter2 .fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTable('scoreBody', t, stageFilter);
+}
+function filterTier3(t, btn) {
+  tierFilter3Val = t;
+  document.querySelectorAll('#tierFilter3 .fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderTable('scoreBody2', t, null, true, true);
+}
+function filterContacts(val, btn) {
+  contactFilterVal = val;
+  document.querySelectorAll('#contactFilter .fbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderContacts(val);
+}
+
+// ─── Navigation ───────────────────────────────────────
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  btn.classList.add('active');
+  const titles = {
+    overview: ['Overview','Medicare Advantage · Health · ACA · QM & Marketplace'],
+    pipeline: ['Prospect scorecard','All pipeline companies · live from Notion'],
+    icp: ['ICP tiers & scoring','Ideal client profiles · 4 buyer tiers · 100-point scoring model'],
+    contacts: ['BD contacts','Decision-maker contact intelligence · live from Notion'],
+    clients: ['Client health','4 active relationships · utilization · AEP readiness'],
+    aep: ['AEP critical path','12 items before Sept 1 · click to check off'],
+    supply: ['Supply map','SMPs · media channels · Media Match AI engine'],
+    competitive: ['Competitive positioning','vs. existing vendors · objection handling · pilot close'],
+    notion: ['Notion workspace','All pages and databases · notion:// deep links'],
+  };
+  document.getElementById('pageTitle').textContent = titles[id][0];
+  document.getElementById('pageSub').textContent = titles[id][1];
+}
+
+// ─── Checklist ────────────────────────────────────────
+function toggleChk(box) {
+  box.classList.toggle('checked');
+  box.closest('.chk').classList.toggle('done');
+  const done = document.querySelectorAll('.chk-box.checked').length;
+  const total = document.querySelectorAll('.chk-box').length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('progressLabel').textContent = `${done} of ${total} complete`;
+  document.getElementById('progressPct').textContent = `${pct}%`;
+  document.getElementById('progressFill').style.width = pct + '%';
+}
+
+// ─── Render all ───────────────────────────────────────
+function renderAll() {
+  renderTable('scoreBody', tierFilter2Val, stageFilter);
+  renderTable('scoreBody2', tierFilter3Val, null, true, true);
+  renderContacts(contactFilterVal);
+}
+
+// ─── Init ─────────────────────────────────────────────
+fetchNotionData();
+</script>
+</body>
+</html>
