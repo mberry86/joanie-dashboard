@@ -1,11 +1,5 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" },
-    { "src": "api/notion-data.js", "use": "@vercel/node" }
-  ],
-  "routes": [
-    { "src": "/api/notion-data", "dest": "/api/notion-data.js" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/notion-data", "destination": "/api/notion-data.js" }
   ]
 }
