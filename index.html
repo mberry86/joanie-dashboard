@@ -6,6 +6,7 @@
 <title>Centerfield · Client & Media Acquisition Command Center</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #0a0c0f;
@@ -327,6 +328,247 @@
 
   @media(max-width:900px){.sidebar{display:none;}.main{padding:20px 16px;}.metric-row{grid-template-columns:repeat(2,minmax(0,1fr));}.icp-grid,.client-grid,.mp-grid,.channel-grid{grid-template-columns:1fr;}.mm-grid{grid-template-columns:1fr;}.smp-reqs{grid-template-columns:repeat(2,minmax(0,1fr));}.ws-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.obj-grid{grid-template-columns:1fr;}.sdb-grid{grid-template-columns:1fr;}}
 </style>
+<!-- DATALOT BRAND v2.0 — CSS override, no HTML/JS modified -->
+<style>
+/* ════════════════════════════════════════════════════════
+   DATALOT BRAND OVERRIDE — injected over live dashboard
+   Applies Datalot v2.0 design tokens, fonts, and table
+   styles without altering any HTML or JavaScript.
+   ════════════════════════════════════════════════════════ */
+
+/* 1. LOAD DATALOT FONTS (Barlow Condensed + Inter + IBM Plex Mono) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+/* 2. MAP EXISTING VARS → DATALOT TOKENS */
+:root {
+  /* Backgrounds */
+  --bg:      #1c1c1c;   /* was #0a0c0f — now DL page shell */
+  --bg2:     #252525;   /* was #111318 — now DL card */
+  --bg3:     #2e2e2e;   /* was #181c22 — now DL card-raised */
+  --bg4:     #383838;   /* was #1e232b — now DL well */
+
+  /* Borders */
+  --border:  rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+
+  /* Text */
+  --text:    #ffffff;
+  --text2:   #cccccc;
+  --text3:   #888888;
+
+  /* Primary accent — DL Cyan replaces green */
+  --green:        #29b6d8;
+  --green-dim:    rgba(41,182,216,0.13);
+  --green-border: rgba(41,182,216,0.35);
+
+  /* Teal → keep as secondary cyan shade */
+  --teal:        #29b6d8;
+  --teal-dim:    rgba(41,182,216,0.10);
+  --teal-border: rgba(41,182,216,0.25);
+
+  /* Status colors */
+  --amber:        #ffb830;
+  --amber-dim:    rgba(255,184,48,0.13);
+  --amber-border: rgba(255,184,48,0.32);
+
+  --red:        #ff5555;
+  --red-dim:    rgba(255,85,85,0.12);
+  --red-border: rgba(255,85,85,0.30);
+
+  --blue:        #4d9eff;
+  --blue-dim:    rgba(77,158,255,0.12);
+  --blue-border: rgba(77,158,255,0.28);
+
+  --purple:        #a07eff;
+  --purple-dim:    rgba(160,126,255,0.12);
+  --purple-border: rgba(160,126,255,0.30);
+
+  /* Typography */
+  --font: 'Inter', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+
+  /* Shape — keep existing radius vars as-is */
+}
+
+/* 3. FONT SMOOTHING */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* 4. SIDEBAR — DL nav background */
+.sidebar {
+  background: #111111 !important;
+  border-right: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* Sidebar logo underline → DL cyan */
+.sidebar-logo {
+  border-bottom: 2px solid #29b6d8 !important;
+}
+
+/* Active nav items → DL cyan */
+.nav-item.active-c,
+.nav-item.active-m {
+  background: rgba(41,182,216,0.13) !important;
+  color: #29b6d8 !important;
+  border-color: rgba(41,182,216,0.35) !important;
+}
+
+/* Sidebar section labels */
+.ssl-client { color: #29b6d8 !important; }
+.ssl-media  { color: #29b6d8 !important; }
+
+/* 5. PAGE TITLE — Barlow Condensed for the display headline */
+.topbar-left .page-title {
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: 26px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+/* 6. SECTION LABELS */
+.sl { color: #888888 !important; }
+.sl-teal { color: #29b6d8 !important; }
+
+/* 7. METRIC CARDS — top accent border */
+.metric-card {
+  border-top: 3px solid #29b6d8 !important;
+  border-radius: 10px !important;
+}
+.metric-card .mv {
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: 30px !important;
+  font-weight: 700 !important;
+}
+.metric-card .ml {
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+/* 8. TABLES — signature Datalot cyan header */
+table thead tr th,
+.dt thead tr th {
+  background: #29b6d8 !important;
+  color: #111111 !important;
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 9px 14px !important;
+}
+
+/* Table rows */
+table tbody tr:hover td {
+  background: #2e2e2e !important;
+}
+
+/* 9. CHIPS / PILLS — adjust to DL sizing */
+.chip {
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  padding: 3px 9px !important;
+}
+
+/* 10. CARDS — standardize */
+.card, .icp-card, .client-card, .mp-card, .tier-card {
+  border-radius: 10px !important;
+}
+
+/* Card headers — raised bg */
+.card-header, .card-hdr {
+  background: #2e2e2e !important;
+}
+
+/* 11. BUTTONS */
+.fbtn {
+  font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+}
+.fbtn:hover {
+  background: #2e2e2e !important;
+  color: #ffffff !important;
+}
+.fbtn.on {
+  background: rgba(41,182,216,0.13) !important;
+  color: #29b6d8 !important;
+  border-color: rgba(41,182,216,0.35) !important;
+}
+
+/* Notion link button */
+[href*="notion"] {
+  color: #29b6d8 !important;
+}
+
+/* 12. SCORE BARS — DL cyan fill */
+.sb-fill { background: #29b6d8 !important; }
+
+/* 13. PROGRESS BARS */
+.progress-fill { background: #29b6d8 !important; }
+.chk-box.checked { background: #29b6d8 !important; border-color: #29b6d8 !important; }
+
+/* 14. PULSE / LIVE DOTS */
+.live-dot, .ndot, .pulse-dot {
+  background: #29b6d8 !important;
+}
+
+/* 15. SCROLLBAR — DL style */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #383838; border-radius: 4px; }
+
+/* 16. SIDEBAR FOOTER */
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+
+/* 17. TOPBAR CHIPS — override border-radius to DL square style */
+.topbar-right .chip {
+  border-radius: 3px !important;
+}
+
+/* 18. Section divider line color */
+.sl::after {
+  background: rgba(255,255,255,0.08) !important;
+}
+
+/* 19. ICP / Tier card accent lines */
+.tier-card, .icp-card {
+  border-left: 3px solid #29b6d8 !important;
+}
+
+/* 20. Mono data values — IBM Plex Mono */
+.mv-mono, .sb-num, .rev, .owner-tag, .mp-stat-v, .sdb-item-val,
+.bar-labels span:last-child, .chk-due {
+  font-family: 'IBM Plex Mono', monospace !important;
+}
+
+/* 21. Notion workspace link grid */
+.ws-link:hover {
+  border-color: rgba(41,182,216,0.35) !important;
+  background: rgba(41,182,216,0.06) !important;
+}
+
+/* 22. Supply-demand bridge */
+.sdb-section {
+  border-top: 3px solid #29b6d8 !important;
+}
+
+</style>
 </head>
 <body>
 <div class="shell">
@@ -396,6 +638,10 @@
     <button class="nav-item" onclick="showSection('media-aep',this,'m')">
       <span class="nav-icon">✓</span> Media AEP critical path
       <span class="nav-dot" style="background:var(--amber)"></span>
+    </button>
+    <button class="nav-item" onclick="showSection('consumer-profiles',this,'m')">
+      <span class="nav-icon">👤</span> Consumer profiles
+      <span class="nav-dot" style="background:var(--teal)"></span>
     </button>
   </div>
 
@@ -999,6 +1245,508 @@
     </div>
   </div>
 
+
+  <!-- ════════════════════════════════════════
+       CONSUMER PROFILES — QM Media Partner Targeting Brief
+  ════════════════════════════════════════ -->
+  <div class="section" id="sec-consumer-profiles">
+
+    <!-- DATA SOURCE BANNER -->
+    <div style="background:var(--bg2);border:1px solid var(--teal-border);border-left:3px solid var(--teal);border-radius:var(--radius);padding:10px 16px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="font-size:11px;font-weight:600;color:var(--teal);">◈ Live Data</div>
+      <div style="font-size:11px;color:var(--text2);">Source: <strong>centerfield_media_edw_order_details · May 2026</strong> · 501 OEP enrollments · 459 net policies · 72.1% portfolio effectuation rate</div>
+      <div style="margin-left:auto;font-size:10px;color:var(--text3);">OEP season · Aetna · UHC/AARP · HealthSpring/Cigna · Wellcare carriers</div>
+    </div>
+
+    <!-- HOW TO USE -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:24px;">
+      <div class="sl sl-teal" style="margin-bottom:8px;">how to use these profiles</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.8;max-width:860px;">
+        Each profile below is built from <strong style="color:var(--text)">actual QM enrollment and effectuation data</strong>. Share them with media partners as <strong style="color:var(--teal)">audience targeting briefs</strong> — the age bands, plan types, states, and intent angles that produce consumers who enroll, pay their first premium, and stay enrolled. The effectuation rate next to each profile is the real number from your data; benchmark is <strong style="color:var(--text)">72.1%</strong> portfolio average.
+      </div>
+    </div>
+
+    <!-- PORTFOLIO SNAPSHOT METRICS -->
+    <div class="sl sl-teal">portfolio snapshot · OEP actuals</div>
+    <div class="metric-row" style="grid-template-columns:repeat(6,minmax(0,1fr));">
+      <div class="metric-card teal-accent">
+        <div class="ml">Net Policies</div>
+        <div class="mv" style="color:var(--teal)">459</div>
+        <div class="ms">OEP season · May 2026</div>
+      </div>
+      <div class="metric-card green-accent">
+        <div class="ml">Portfolio Eff Rate</div>
+        <div class="mv" style="color:var(--green)">72.1%</div>
+        <div class="ms">331 effectuated</div>
+      </div>
+      <div class="metric-card">
+        <div class="ml">Best Product</div>
+        <div class="mv" style="color:var(--teal)">MAPD PPO</div>
+        <div class="ms">78.0% eff · 15.6 avg days</div>
+      </div>
+      <div class="metric-card">
+        <div class="ml">Best Age Band</div>
+        <div class="mv" style="color:var(--teal)">70–74</div>
+        <div class="ms">78.2% eff rate</div>
+      </div>
+      <div class="metric-card">
+        <div class="ml">Best Carrier</div>
+        <div class="mv" style="color:var(--teal)">Aetna</div>
+        <div class="ms">79.2% eff · all product types</div>
+      </div>
+      <div class="metric-card" style="border-color:var(--red-border)">
+        <div class="ml">Avoid Segment</div>
+        <div class="mv" style="color:var(--red)">D-SNP 75+</div>
+        <div class="ms">52.2% eff — 20pp below avg</div>
+      </div>
+    </div>
+
+    <!-- PROFILE CARDS -->
+    <div class="sl sl-teal">consumer profiles · 4 target archetypes · ranked by effectuation</div>
+    <div class="client-grid" style="grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-bottom:28px;">
+
+      <!-- PROFILE 1 -->
+      <div class="client-card" style="border-color:var(--teal-border);border-top:3px solid var(--teal);">
+        <div class="client-header">
+          <div>
+            <div class="client-name" style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:18px;">🎯</span> The MAPD PPO Converter
+            </div>
+            <div class="client-sub">Age 65–74 · MAPD PPO · Aetna / UHC · Benefit-value motivated</div>
+          </div>
+          <span class="pill" style="background:rgba(76,221,106,0.15);color:var(--green);border:1px solid var(--green-border);font-size:11px;font-weight:700;">81.6% EFF</span>
+        </div>
+
+        <!-- EFF BAR -->
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Effectuation rate</span><span style="color:var(--green)">81.6% <span style="color:var(--text3);font-size:10px;font-weight:400;">(+9.5pp above avg)</span></span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:81.6%;background:var(--green)"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Avg days persistency</span><span style="color:var(--teal)">15.6 days</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:71%;background:var(--teal)"></div></div>
+        </div>
+
+        <!-- ATTRS TABLE -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:11px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Age band</div>
+            <div style="font-weight:600;color:var(--text);">65–74 <span style="color:var(--text3);font-weight:400;">(avg 69.5)</span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Plan type</div>
+            <div style="font-weight:600;color:var(--teal);">MAPD PPO</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Best carriers</div>
+            <div style="font-weight:600;color:var(--text);">Aetna · UHC/AARP</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">TPV rate</div>
+            <div style="font-weight:600;color:var(--text);">67% verified</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Top states</div>
+            <div style="font-weight:600;color:var(--text);">AZ · TX · NC · MI</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Sample size</div>
+            <div style="font-weight:600;color:var(--text);">38 policies · OEP</div>
+          </div>
+        </div>
+
+        <!-- TOP PLANS -->
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em;">Top-performing plans</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">
+          <span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 8px;">Aetna Medicare Eagle (PPO)</span>
+          <span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 8px;">Aetna Medicare Signature (PPO)</span>
+          <span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 8px;">AARP MA from UHC TX (PPO)</span>
+        </div>
+
+        <!-- PARTNER BRIEF -->
+        <div class="client-opp opp-teal" style="font-size:11px;">
+          <strong>Media partner brief:</strong> Target beneficiaries 65–74 actively comparing PPO plan options. Creative angles: plan flexibility, no referral requirements, nationwide network access. Emphasize ability to keep current doctors. AZ, TX, and NC show highest effectuation — prioritize geo targeting here. Aetna PPO brand familiarity drives conversion; lead creative with Aetna or UHC/AARP plan names when permitted.
+        </div>
+      </div>
+
+      <!-- PROFILE 2 -->
+      <div class="client-card" style="border-top:3px solid var(--teal);">
+        <div class="client-header">
+          <div>
+            <div class="client-name" style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:18px;">🏥</span> The MAPD HMO Value Seeker
+            </div>
+            <div class="client-sub">Age 70–74 · MAPD HMO · Aetna / UHC · Cost-savings motivated</div>
+          </div>
+          <span class="pill" style="background:rgba(76,221,106,0.12);color:var(--green);border:1px solid var(--green-border);font-size:11px;font-weight:700;">76.6% EFF</span>
+        </div>
+
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Effectuation rate</span><span style="color:var(--green)">76.6% <span style="color:var(--text3);font-size:10px;font-weight:400;">(+4.5pp above avg)</span></span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:76.6%;background:var(--green)"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Avg days persistency</span><span style="color:var(--teal)">15.7 days</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:72%;background:var(--teal)"></div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:11px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Age band</div>
+            <div style="font-weight:600;color:var(--text);">70–74 <span style="color:var(--text3);font-weight:400;">(avg 72.1)</span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Plan type</div>
+            <div style="font-weight:600;color:var(--teal);">MAPD HMO</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Best carriers</div>
+            <div style="font-weight:600;color:var(--text);">Aetna (89%) · UHC (81%)</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">TPV rate</div>
+            <div style="font-weight:600;color:var(--text);">71% verified</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Top states</div>
+            <div style="font-weight:600;color:var(--text);">TX · AL · MO · CO · IN</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Sample size</div>
+            <div style="font-weight:600;color:var(--text);">47 policies · OEP</div>
+          </div>
+        </div>
+
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em;">Top-performing plans</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">
+          <span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 8px;">HealthSpring Preferred Full Savings (HMO)</span>
+          <span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 8px;">Aetna Medicare Signature Care (HMO)</span>
+          <span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 8px;">UHC AARP MA (HMO)</span>
+        </div>
+
+        <div class="client-opp opp-teal" style="font-size:11px;">
+          <strong>Media partner brief:</strong> Target 70–74 segment with HMO cost-savings messaging — $0 premium plans, low copays, prescription coverage, and dental/vision supplemental benefits. TX, AL, and Southern states show strongest volume and eff. Aetna Signature and HealthSpring HMO brands convert well here. Key angle: "same coverage, lower cost" — this age band is highly responsive to premium reduction creative.
+        </div>
+      </div>
+
+      <!-- PROFILE 3 -->
+      <div class="client-card" style="border-top:3px solid var(--blue);">
+        <div class="client-header">
+          <div>
+            <div class="client-name" style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:18px;">💊</span> The Chronic Condition Managed
+            </div>
+            <div class="client-sub">Age 65–74 · C-SNP · UHC / Aetna · Chronic condition motivated</div>
+          </div>
+          <span class="pill" style="background:rgba(74,158,255,0.12);color:var(--blue);border:1px solid var(--blue-border);font-size:11px;font-weight:700;">73.3% EFF</span>
+        </div>
+
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Effectuation rate</span><span style="color:var(--blue)">73.3% <span style="color:var(--text3);font-size:10px;font-weight:400;">(+1.2pp above avg)</span></span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:73.3%;background:var(--blue)"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Avg days persistency</span><span style="color:var(--blue)">14.5 days</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:66%;background:var(--blue)"></div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:11px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Age band</div>
+            <div style="font-weight:600;color:var(--text);">65–74 <span style="color:var(--text3);font-weight:400;">(avg 68.4)</span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Plan type</div>
+            <div style="font-weight:600;color:var(--blue);">C-SNP</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Best carriers</div>
+            <div style="font-weight:600;color:var(--text);">Aetna · UHC · HealthSpring</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">TPV rate</div>
+            <div style="font-weight:600;color:var(--text);">60% verified</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Top states</div>
+            <div style="font-weight:600;color:var(--text);">OH · AZ · GA · FL · MI</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Sample size</div>
+            <div style="font-weight:600;color:var(--text);">86 policies · OEP</div>
+          </div>
+        </div>
+
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em;">Top-performing plans</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">
+          <span style="font-size:10px;background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);border-radius:4px;padding:2px 8px;">UHC Complete Care (HMO-POS C-SNP)</span>
+          <span style="font-size:10px;background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);border-radius:4px;padding:2px 8px;">Aetna Medicare Chronic Care (HMO C-SNP)</span>
+          <span style="font-size:10px;background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-border);border-radius:4px;padding:2px 8px;">HealthSpring Achieve (HMO C-SNP)</span>
+        </div>
+
+        <div class="client-opp" style="background:var(--blue-dim);border:1px solid var(--blue-border);font-size:11px;">
+          <strong>Media partner brief:</strong> Target Medicare-eligible adults 65–74 managing chronic conditions — diabetes, heart disease, COPD. C-SNP creative angle: specialized disease management, coordinated care team, condition-specific benefits. OH, AZ, and GA are top-performing states. Quote Velocity (87.5% eff on C-SNP) and EngageCX (73.1%) are highest-quality sources for this profile — brief partners on their approach. Lower TPV rate (60%) means this consumer needs stronger pre-transfer qualification.
+        </div>
+      </div>
+
+      <!-- PROFILE 4 -->
+      <div class="client-card" style="border-top:3px solid var(--amber);">
+        <div class="client-header">
+          <div>
+            <div class="client-name" style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:18px;">🔄</span> The Dual-Eligible Enrollee
+            </div>
+            <div class="client-sub">Age &lt;70 · D-SNP · UHC / Aetna · Low-income/Medicaid motivated</div>
+          </div>
+          <span class="pill" style="background:rgba(255,184,48,0.13);color:var(--amber);border:1px solid var(--amber-border);font-size:11px;font-weight:700;">65.5% EFF</span>
+        </div>
+
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Effectuation rate</span><span style="color:var(--amber)">65.5% <span style="color:var(--text3);font-size:10px;font-weight:400;">(-6.6pp below avg · optimize)</span></span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:65.5%;background:var(--amber)"></div></div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>Avg days persistency</span><span style="color:var(--amber)">12.5 days</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:57%;background:var(--amber)"></div></div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;font-size:11px;">
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Age band</div>
+            <div style="font-weight:600;color:var(--text);">&lt;70 <span style="color:var(--text3);font-weight:400;">(avg 60.8)</span></div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Plan type</div>
+            <div style="font-weight:600;color:var(--amber);">D-SNP</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Best carriers</div>
+            <div style="font-weight:600;color:var(--text);">UHC (72%) · Aetna (71%)</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">TPV rate</div>
+            <div style="font-weight:600;color:var(--text);">63% verified</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Top states</div>
+            <div style="font-weight:600;color:var(--text);">NY · MI · TX · NC · OH</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:6px;padding:8px 10px;">
+            <div style="color:var(--text3);margin-bottom:2px;">Sample size</div>
+            <div style="font-weight:600;color:var(--text);">58 policies · OEP</div>
+          </div>
+        </div>
+
+        <div style="font-size:10px;color:var(--text3);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.08em;">Top-performing plans</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;">
+          <span style="font-size:10px;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 8px;">UHC Dual Complete NC-S3 (HMO-POS D-SNP)</span>
+          <span style="font-size:10px;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 8px;">Aetna Medicare Full Dual Care (HMO D-SNP)</span>
+        </div>
+
+        <div class="client-opp opp-amber" style="font-size:11px;">
+          <strong>Media partner brief:</strong> Target dual-eligible consumers under 70 — on both Medicare and Medicaid. Key angle: $0 premium, extra benefits (OTC, food, transport), Medicaid coordination. NY, MI, and NC are top states for this segment. ⚠ Lower eff rate (65.5%) means creative must clearly set premium payment expectations upfront. Adolent Marketing delivers 100% eff on D-SNP — benchmark their approach. Avoid D-SNP consumers 75+ entirely (52.2% eff).
+        </div>
+      </div>
+
+    </div><!-- /profile grid -->
+
+    <!-- AVOID SEGMENT -->
+    <div class="sl sl-teal">segment to avoid · do not scale</div>
+    <div style="background:var(--red-dim);border:1px solid var(--red-border);border-left:3px solid var(--red);border-radius:var(--radius);padding:14px 18px;margin-bottom:28px;display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+      <div style="font-size:22px;flex-shrink:0;">🚫</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13px;color:var(--red);margin-bottom:4px;">D-SNP · Age 75–79 — 52.2% Effectuation · Do Not Scale</div>
+        <div style="font-size:11px;color:var(--text2);line-height:1.7;">
+          This segment produced <strong>52.2% effectuation</strong> against a 72.1% portfolio average — a 20 percentage point gap. 23 policies enrolled, only 12 effectuated. D-SNP consumers in this age band show the lowest premium payment rates and shortest persistency in the entire dataset. <strong style="color:var(--red)">Brief all media partners to deprioritize this combination.</strong> If running D-SNP creative, geo-target under-70 audiences and suppress 75+ age segments.
+        </div>
+      </div>
+      <div style="flex-shrink:0;text-align:right;">
+        <div style="font-size:28px;font-weight:700;color:var(--red);line-height:1;">52.2%</div>
+        <div style="font-size:9px;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;">Eff Rate</div>
+        <div style="font-size:11px;color:var(--red);margin-top:4px;">−20pp vs avg</div>
+      </div>
+    </div>
+
+    <!-- STATE QUALITY MATRIX -->
+    <div class="sl sl-teal">state quality tiers · where to concentrate media spend</div>
+    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:28px;">
+      <div style="background:var(--bg2);border:1px solid var(--green-border);border-top:3px solid var(--green);border-radius:var(--radius);padding:14px 16px;">
+        <div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">🟢 Tier 1 — Prioritize (80%+ eff)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:4px;padding:3px 8px;">NC 83.3%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:4px;padding:3px 8px;">VA 81.3%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:4px;padding:3px 8px;">PA 81.0%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:700;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:4px;padding:3px 8px;">OH 80.8%</span>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;">Max media investment · all product types</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--teal-border);border-top:3px solid var(--teal);border-radius:var(--radius);padding:14px 16px;">
+        <div style="font-size:10px;font-weight:600;color:var(--teal);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">🔵 Tier 2 — Scale (70–79% eff)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">TN 76.9%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">AZ 76.5%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">AR 76.5%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">TX 74.4%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">AL 73.1%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">CO 72.7%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">SC 72.2%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">KY 72.2%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">MO 72.2%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">GA 71.4%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">MI 70.0%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:4px;padding:2px 7px;">IL 70.0%</span>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;">Strong investment · scale all product types</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--amber-border);border-top:3px solid var(--amber);border-radius:var(--radius);padding:14px 16px;">
+        <div style="font-size:10px;font-weight:600;color:var(--amber);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">🟡 Tier 3 — Watch (&lt;70% eff)</div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;">
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">IN 68.4%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">FL 67.6%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">NY 65.4%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">MS 63.6%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">LA 62.5%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">WI 60.0%</span>
+          <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:600;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:4px;padding:2px 7px;">OK 57.1%</span>
+        </div>
+        <div style="font-size:10px;color:var(--text3);margin-top:8px;">Cap spend · review creative + demo targeting</div>
+      </div>
+    </div>
+
+    <!-- CARRIER PERFORMANCE TABLE -->
+    <div class="sl sl-teal">carrier performance · effectuation by product type</div>
+    <div style="overflow-x:auto;margin-bottom:28px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:var(--teal);color:#111;">
+            <th style="padding:9px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Carrier</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Overall Eff</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">MAPD HMO</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">MAPD PPO</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">C-SNP</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">D-SNP</th>
+            <th style="padding:9px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Media Brief</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:9px 14px;font-weight:600;color:var(--text);">Aetna</td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);">79.2%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);">89.3%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);">81.6%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">75.0%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">71.4%</span></td>
+            <td style="padding:9px 14px;font-size:11px;color:var(--text2);">Lead creative for HMO + PPO. Highest eff across all types.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg3);">
+            <td style="padding:9px 14px;font-weight:600;color:var(--text);">UHC / AARP</td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);">74.8%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);">81.2%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">73.7%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">70.6%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">72.0%</span></td>
+            <td style="padding:9px 14px;font-size:11px;color:var(--text2);">Strong HMO eff. AARP brand resonates with 65–74 demo.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:9px 14px;font-weight:600;color:var(--text);">HealthSpring/Cigna</td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">71.4%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">72.7%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">—</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text2);">75.0%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">—</span></td>
+            <td style="padding:9px 14px;font-size:11px;color:var(--text2);">Solid HMO + C-SNP. TX and Southern states strongest.</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg3);">
+            <td style="padding:9px 14px;font-weight:600;color:var(--amber);">Wellcare ⚠</td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--red);">35.0%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--red);">33.3%</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">—</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">—</span></td>
+            <td style="padding:9px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;color:var(--text3);">—</span></td>
+            <td style="padding:9px 14px;font-size:11px;color:var(--red);">35% eff — 37pp below avg. Deprioritize or review consumer qualification process.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SOURCE PERFORMANCE TABLE -->
+    <div class="sl sl-teal">top sources by effectuation · partner performance benchmark</div>
+    <div style="overflow-x:auto;margin-bottom:16px;">
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead>
+          <tr style="background:var(--teal);color:#111;">
+            <th style="padding:9px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Source</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Policies</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Eff Rate</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">vs Avg</th>
+            <th style="padding:9px 14px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Best Product</th>
+            <th style="padding:9px 14px;text-align:left;font-family:'IBM Plex Mono',monospace;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Signal</th>
+          </tr>
+        </thead>
+        <tbody id="sourceTableBody">
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">Barrington Media Group</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">5</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);">100%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:3px;padding:1px 6px;">+27.9pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">MAPD HMO</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--green);">Small n — validate at scale</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg3);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">InsurCo (Fluent)</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">20</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);">80.0%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:3px;padding:1px 6px;">+7.9pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">C-SNP · PPO</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--teal);">Qualified pipeline quality — scale C-SNP</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">Quote Velocity</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">26</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--green);">76.9%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--green-dim);color:var(--green);border:1px solid var(--green-border);border-radius:3px;padding:1px 6px;">+4.8pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">C-SNP 87.5%</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--teal);">Strong C-SNP benchmark — brief as best practice</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg3);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">EngageCX</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">79</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);">75.9%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:3px;padding:1px 6px;">+3.8pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">MAPD PPO 85.7%</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--teal);">High volume · strong across all types</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">SkyLab Digital</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">100</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--teal);">74.0%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--teal-dim);color:var(--teal);border:1px solid var(--teal-border);border-radius:3px;padding:1px 6px;">+1.9pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">MAPD HMO 77.8%</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--teal);">Largest volume source · consistent quality</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);background:var(--bg3);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">Paragon Media</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">39</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--amber);">61.5%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);border-radius:3px;padding:1px 6px;">−10.6pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">All types weak</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--amber);">⚠ Below avg across all products — review brief</td>
+          </tr>
+          <tr style="border-bottom:1px solid var(--border);">
+            <td style="padding:8px 14px;font-weight:600;color:var(--text);">The Wisdom Companies</td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">10</td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-family:'IBM Plex Mono',monospace;font-weight:700;color:var(--red);">50.0%</span></td>
+            <td style="padding:8px 14px;text-align:center;"><span style="font-size:10px;background:var(--red-dim);color:var(--red);border:1px solid var(--red-border);border-radius:3px;padding:1px 6px;">−22.1pp</span></td>
+            <td style="padding:8px 14px;text-align:center;color:var(--text2);">MAPD HMO 20%</td>
+            <td style="padding:8px 14px;font-size:11px;color:var(--red);">MAPD HMO only 20% eff — immediate review needed</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+  <!-- /sec-consumer-profiles -->
+
   <!-- ════════════════════════════════════════
        NOTION WORKSPACE
   ════════════════════════════════════════ -->
@@ -1176,6 +1924,7 @@ function showSection(id,btn,side){
     supply:['Supply Map','SMPs · media channels · Media Match AI engine'],
     'supply-demand':['Supply ↔ Demand Bridge','Aligning media BD with client demand · gap analysis'],
     'media-aep':['Media AEP Critical Path','12 media items before Sept 1 · click to check off'],
+    'consumer-profiles':['Consumer Profiles','QM OEP actuals · 501 enrollments · media partner targeting brief · data: May 2026'],
     notion:['Notion Workspace','Client BD + Media BD pages and databases'],
   };
   const t=titles[id]||['Dashboard',''];
