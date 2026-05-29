@@ -568,6 +568,25 @@ table tbody tr:hover td {
   border-top: 3px solid #29b6d8 !important;
 }
 
+/* ── QM OVERFLOW SECTION ── */
+.qmo-tab{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .15s;font-family:var(--font);}
+.qmo-tab:hover{background:var(--bg3);color:var(--text);}
+.qmo-tab.active{background:var(--amber-dim);color:var(--amber);border-color:var(--amber-border);font-weight:600;}
+.qmo-panel{display:none;}.qmo-panel.active{display:block;}
+.qmo-state{cursor:pointer;stroke:#0a0c0f;stroke-width:.8;transition:opacity .15s;}
+.qmo-state:hover{opacity:.72;stroke-width:2;stroke:var(--amber);}
+.qmo-map-tip{position:fixed;background:var(--bg2);border:1px solid var(--amber-border);border-radius:8px;padding:10px 13px;font-size:11px;pointer-events:none;z-index:999;display:none;min-width:155px;}
+.qmo-tt-title{font-family:var(--mono);font-size:10px;font-weight:600;color:var(--amber);margin-bottom:5px;text-transform:uppercase;letter-spacing:.05em;}
+.qmo-tt-row{display:flex;justify-content:space-between;gap:12px;margin-bottom:2px;color:var(--text2);font-size:11px;}
+.qmo-tt-row span:last-child{font-family:var(--mono);font-size:10px;color:var(--text);}
+.qmo-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}
+.qmo-bar-state{font-family:var(--mono);font-size:11px;color:var(--text);min-width:26px;}
+.qmo-bar-track{flex:1;height:18px;background:var(--bg4);border-radius:4px;overflow:hidden;}
+.qmo-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px;}
+.qmo-bar-fill span{font-size:9px;font-family:var(--mono);color:rgba(0,0,0,.7);font-weight:600;white-space:nowrap;}
+.qmo-bar-meta{font-family:var(--mono);font-size:10px;color:var(--text3);min-width:50px;text-align:right;}
+.qmo-bar-rev{font-family:var(--mono);font-size:10px;color:var(--green);min-width:50px;text-align:right;}
+
 </style>
 </head>
 <body>
@@ -609,6 +628,10 @@ table tbody tr:hover td {
     </button>
     <button class="nav-item" onclick="showSection('competitive',this,'c')">
       <span class="nav-icon">⚔</span> Competitive positioning
+    </button>
+    <button class="nav-item" onclick="showSection('qmo',this,'c')">
+      <span class="nav-icon">◎</span> QM Overflow buyers
+      <span class="nav-dot" style="background:var(--amber)"></span>
     </button>
   </div>
 
@@ -785,6 +808,21 @@ table tbody tr:hover td {
       </div>
       <div style="overflow-x:auto;"><table><thead><tr><th>Partner</th><th>Tier</th><th>Channel</th><th>Stage</th><th>Fit score</th><th>AEP scale</th><th>Mo. vol est.</th><th>Owner</th><th>Next action</th></tr></thead><tbody id="mediaScoreBody"></tbody></table></div>
     </div>
+
+    <!-- QM Overflow callout -->
+    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(245,166,35,0.08),rgba(0,212,160,0.06));border:1px solid var(--amber-border);border-radius:var(--radius-lg);padding:16px 18px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:600;color:var(--amber);">◎ QM Overflow Buyer Opportunity — actual ping data</div>
+        <button onclick="showSection('qmo',document.querySelector('[onclick*=qmo]'),  'c')" style="font-size:10px;padding:3px 10px;border-radius:15px;border:1px solid var(--amber-border);background:var(--amber-dim);color:var(--amber);cursor:pointer;font-family:var(--font);">Open full analysis →</button>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--text);">3.81M</div><div style="font-size:10px;color:var(--text3);margin-top:3px;">Total pings analyzed</div></div>
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--red);">1.24M</div><div style="font-size:10px;color:var(--text3);margin-top:3px;">Missed calls · 32.5% miss rate</div></div>
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--amber);">$55–74M</div><div style="font-size:10px;color:var(--text3);margin-top:3px;">SEP rev opportunity</div></div>
+        <div style="text-align:center;"><div style="font-size:20px;font-weight:600;font-family:var(--mono);color:var(--green);">OH · IL · PA</div><div style="font-size:10px;color:var(--text3);margin-top:3px;">Top gap states · recruit buyers now</div></div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ════════════════════════════════════════
@@ -1748,6 +1786,186 @@ table tbody tr:hover td {
   <!-- /sec-consumer-profiles -->
 
   <!-- ════════════════════════════════════════
+       QM OVERFLOW BUYERS
+  ════════════════════════════════════════ -->
+  <div class="section" id="sec-qmo">
+
+    <!-- Tab strip -->
+    <div style="display:flex;gap:6px;margin-bottom:22px;flex-wrap:wrap;" id="qmoTabStrip">
+      <button class="qmo-tab active" onclick="qmoTab('opportunity',this)">◈ Opportunity</button>
+      <button class="qmo-tab" onclick="qmoTab('heatmap',this)">⬡ State heat map</button>
+      <button class="qmo-tab" onclick="qmoTab('revenue',this)">$ Revenue model</button>
+      <button class="qmo-tab" onclick="qmoTab('targets',this)">✦ Priority targets</button>
+      <button class="qmo-tab" onclick="qmoTab('playbook',this)">→ Outreach playbook</button>
+    </div>
+
+    <!-- ── OPPORTUNITY ── -->
+    <div class="qmo-panel active" id="qmop-opportunity">
+      <div class="sl">the qm overflow opportunity — validated by actual ping data</div>
+      <div style="background:linear-gradient(135deg,var(--amber-dim),var(--green-dim));border:1px solid var(--amber-border);border-radius:var(--radius-lg);padding:18px 20px;margin-bottom:18px;">
+        <div style="font-size:14px;font-weight:600;color:var(--amber);margin-bottom:6px;">The QM Overflow Thesis</div>
+        <div style="font-size:12px;color:var(--text2);line-height:1.7;">Centerfield's QM operation generates <strong style="color:var(--text);">3.81M pings</strong> across 51 states. When QM agents are unavailable, those calls go unbid — <strong style="color:var(--amber);">1.24M missed calls at 32.5% miss rate</strong>. The overflow-to-marketplace test has proven conversion. The play: recruit agencies <em>like</em> QM — they buy the same media for their own operation. Revenue opportunity: <strong style="color:var(--green);">$55–74M SEP · $165–222M+ AEP</strong>.</div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;">
+        <div class="metric-card"><div class="ml">Total Pings</div><div class="mv" style="color:var(--blue);">3.81M</div><div class="ms">21 sources · 51 states</div></div>
+        <div class="metric-card"><div class="ml">Calls Bid On</div><div class="mv" style="color:var(--green);">455K</div><div class="ms">12.0% overall bid rate</div></div>
+        <div class="metric-card"><div class="ml">Missed Calls</div><div class="mv" style="color:var(--red);">1.24M</div><div class="ms">32.5% overall miss rate</div></div>
+        <div class="metric-card"><div class="ml">Rev @ $45 CPL</div><div class="mv" style="color:var(--amber);">$55.7M</div><div class="ms">conservative SEP estimate</div></div>
+      </div>
+
+      <div class="sl">call flow — where the leak becomes the opportunity</div>
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-header"><div class="card-title">QM → Marketplace Overflow Flow</div></div>
+        <div style="padding:16px;display:flex;align-items:center;gap:0;overflow-x:auto;">
+          <div style="flex-shrink:0;background:var(--green-dim);border:1px solid var(--green-border);border-radius:var(--radius);padding:12px 16px;text-align:center;min-width:120px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">Media Partners</div><div style="font-size:18px;font-weight:600;color:var(--green);">SMP</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">Inbound MA calls</div></div>
+          <div style="flex-shrink:0;width:30px;text-align:center;color:var(--text3);font-size:16px;">→</div>
+          <div style="flex-shrink:0;background:var(--green-dim);border:1px solid var(--green-border);border-radius:var(--radius);padding:12px 16px;text-align:center;min-width:120px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">Primary Routing</div><div style="font-size:18px;font-weight:600;color:var(--green);">QM</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">200 SEP / 700 AEP</div></div>
+          <div style="flex-shrink:0;width:30px;text-align:center;color:var(--text3);font-size:16px;position:relative;"><span style="position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:7px;font-family:var(--mono);color:var(--amber);letter-spacing:.07em;white-space:nowrap;">OVERFLOW</span>→</div>
+          <div style="flex-shrink:0;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:var(--radius);padding:12px 16px;text-align:center;min-width:120px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">Agent Avail. Gap</div><div style="font-size:18px;font-weight:600;color:var(--amber);">1.24M</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">unbid calls annually</div></div>
+          <div style="flex-shrink:0;width:30px;text-align:center;color:var(--text3);font-size:16px;">→</div>
+          <div style="flex-shrink:0;background:var(--green-dim);border:1px solid var(--green-border);border-radius:var(--radius);padding:12px 16px;text-align:center;min-width:130px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:4px;">New MP Buyers</div><div style="font-size:18px;font-weight:600;color:var(--green);">$55M+</div><div style="font-size:10px;color:var(--text3);margin-top:2px;">agencies · FMOs · BPOs</div></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
+        <div class="metric-card" style="border-color:var(--red-border);"><div class="ml" style="color:var(--red);">Critical Gap (&gt;60%)</div><div class="mv" style="font-size:20px;color:var(--red);">9 states</div><div class="ms">MO·WA·IN·IL·AR·UT·WY·SD·RI<br><span style="color:var(--red);font-family:var(--mono);font-size:10px;">~400K missed</span></div></div>
+        <div class="metric-card" style="border-color:var(--amber-border);"><div class="ml" style="color:var(--amber);">High Gap (40–60%)</div><div class="mv" style="font-size:20px;color:var(--amber);">8 states</div><div class="ms">PA·OH·KS·MI·WI·WV·GA·OR<br><span style="color:var(--amber);font-family:var(--mono);font-size:10px;">~540K missed</span></div></div>
+        <div class="metric-card" style="border-color:var(--blue-border);"><div class="ml" style="color:var(--blue);">Moderate (20–40%)</div><div class="mv" style="font-size:20px;color:var(--blue);">12 states</div><div class="ms">AL·NY·FL·LA·NC·OK·MS·NM·CO<br><span style="color:var(--blue);font-family:var(--mono);font-size:10px;">~250K missed</span></div></div>
+        <div class="metric-card" style="border-color:var(--green-border);"><div class="ml" style="color:var(--green);">Well Covered (&lt;20%)</div><div class="mv" style="font-size:20px;color:var(--green);">22 states</div><div class="ms">TX·VA·AZ·SC·KY·TN + more<br><span style="color:var(--green);font-family:var(--mono);font-size:10px;">~48K missed</span></div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">Why Agencies Like QM Are the #1 Target Buyer</div></div>
+        <div style="padding:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--green);font-family:var(--mono);margin-bottom:8px;font-weight:600;">AGENCIES — PRIORITY ★</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.9;">✓ <strong style="color:var(--text);">Multi-carrier quoting</strong> — higher close rate<br>✓ <strong style="color:var(--text);">Licensed agent infra</strong> — no ramp needed<br>✓ <strong style="color:var(--text);">Understand IB call economics</strong> — sophisticated buyers<br>✓ <strong style="color:var(--text);">Feel agent availability pain</strong> — they live it daily<br>✓ <strong style="color:var(--text);">AEP appetite</strong> — hungry for proven supply<br>✓ <strong style="color:var(--text);">Faster contracting</strong> — familiar with call buying</div>
+          </div>
+          <div>
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--amber);font-family:var(--mono);margin-bottom:8px;font-weight:600;">DIRECT CARRIERS — SECONDARY</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.9;">⚠ <strong style="color:var(--text);">Single-rate quoting</strong> — structurally lower conversion<br>⚠ <strong style="color:var(--text);">Complex contracting</strong> — legal/procurement layers<br>⚠ <strong style="color:var(--text);">Service area limits</strong> — plan footprint restrictions<br>⚠ <strong style="color:var(--text);">Longer sales cycles</strong> — enterprise buying process<br>✓ <strong style="color:var(--green);">Still pursue</strong> — scale and brand credibility<br>✓ <strong style="color:var(--green);">Centene active</strong> — expand states and volume</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HEAT MAP ── -->
+    <div class="qmo-panel" id="qmop-heatmap">
+      <div class="sl">state heat map — 3.81m pings · toggle to switch view</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <div><div class="card-title">Ping Volume &amp; Miss Rate by State</div><div class="card-sub">Hover any state for detail</div></div>
+          <div style="display:flex;gap:6px;" id="qmoMapToggle">
+            <button class="fbtn on" onclick="qmoSetMap('pings',this)">Ping Volume</button>
+            <button class="fbtn" onclick="qmoSetMap('missed',this)">Missed Calls</button>
+            <button class="fbtn" onclick="qmoSetMap('missrate',this)">Miss Rate %</button>
+          </div>
+        </div>
+        <div style="padding:16px;">
+          <div style="position:relative;width:100%;max-width:860px;margin:0 auto;" id="qmoMapWrap"></div>
+          <div style="display:flex;gap:14px;align-items:center;margin-top:10px;flex-wrap:wrap;" id="qmoMapLegend"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">All 51 States — Sorted by Ping Volume</div></div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>State</th><th>Pings</th><th>Bids</th><th>Bid Rate</th><th>Missed</th><th>Miss Rate</th><th>Rev @ $45</th><th>Action</th></tr></thead><tbody id="qmoStateTable"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── REVENUE ── -->
+    <div class="qmo-panel" id="qmop-revenue">
+      <div class="sl">revenue impact model — missed calls × cpl · adjust to your actual rate</div>
+      <div style="background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:var(--radius);padding:12px 14px;font-size:11px;color:#ffd29a;line-height:1.6;margin-bottom:16px;">
+        <strong>Missed calls × CPL = recoverable revenue.</strong> At $45 conservative, SEP opportunity is $55.7M. At AEP (est. 3× SEP volume), the same miss rate produces $167M+. Every week without additional buyers is revenue lost at the highest-CPL period of the year.
+      </div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-header">
+          <div><div class="card-title">Revenue by State — Top 20</div><div class="card-sub">Missed calls × selected CPL</div></div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <span style="font-size:11px;color:var(--text3);">CPL: $<strong id="qmoCplDisplay">45</strong></span>
+            <input type="range" id="qmoCplSlider" min="30" max="100" value="45" style="width:130px;accent-color:var(--amber);" oninput="qmoUpdateCPL(this.value)">
+          </div>
+        </div>
+        <div style="padding:16px;" id="qmoRevBars"></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">Top 15 States — Revenue Detail</div></div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>Rank</th><th>State</th><th>Missed</th><th>Miss Rate</th><th>Rev @ CPL</th><th>AEP 3× Est.</th><th>BD Action</th></tr></thead><tbody id="qmoRevTable"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- ── PRIORITY TARGETS ── -->
+    <div class="qmo-panel" id="qmop-targets">
+      <div class="sl">priority targets — 30 buyers rescored against actual overflow geography</div>
+      <div style="background:var(--bg2);border:1px solid var(--purple-border);border-radius:var(--radius-lg);padding:16px 18px;font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:16px;">
+        <strong style="color:var(--text);">Data insight:</strong> TX and FL (largest ping markets) have <em>low</em> miss rates — reasonably covered. The real gap is the <strong style="color:var(--text);">Midwest</strong>: OH (57% miss · 111K calls), IL (66% · 80K), PA (55% · 92K), IN (68% · 63K), MO (79% · 48K). Target buyers with strong <strong style="color:var(--amber);">Ohio, Illinois, Indiana, Missouri, Michigan, Wisconsin</strong> licensing are your highest-value recruits.
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div><div class="card-title">30 Target Buyers</div><div class="card-sub">ICP score weighted for midwest state coverage · filter by type</div></div>
+          <div class="filter-row" id="qmoBuyerFilter">
+            <button class="fbtn on" onclick="qmoFilterBuyers('all',this)">All (30)</button>
+            <button class="fbtn" onclick="qmoFilterBuyers('Agency',this)">Agency ★</button>
+            <button class="fbtn" onclick="qmoFilterBuyers('FMO',this)">FMO</button>
+            <button class="fbtn" onclick="qmoFilterBuyers('BPO',this)">BPO</button>
+            <button class="fbtn" onclick="qmoFilterBuyers('Carrier',this)">Carrier</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;"><table><thead><tr><th>#</th><th>Company</th><th>Type</th><th>ICP Score</th><th>Key Overflow States</th><th>AEP</th><th>Est. Rev/yr</th><th>Priority</th><th>First Action</th></tr></thead><tbody id="qmoBuyerTable"></tbody></table></div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;">
+        <div class="client-opp opp-red"><strong>Recruit Buyer Now</strong><br>MO — 79% miss · 48K calls<br>WA — 84% miss · 38K calls<br>IN — 68% miss · 63K calls<br>IL — 66% miss · 80K calls<br><em style="font-size:10px;">Agent AA gaps — any qualified buyer</em></div>
+        <div class="client-opp opp-amber"><strong>High Priority</strong><br>OH — 57% miss · 111K calls<br>PA — 55% miss · 92K calls<br>MI — 42% miss · 75K calls<br>GA — 40% miss · 84K calls<br><em style="font-size:10px;">High volume + high miss = fast revenue</em></div>
+        <div class="client-opp opp-green"><strong>Well Covered — Grow</strong><br>TX — 11% miss · Centene active<br>FL — 20% miss · Centene active<br>VA — 8% miss · covered<br>AZ — 8% miss · reasonable<br><em style="font-size:10px;">Expand existing buyer volume</em></div>
+      </div>
+    </div>
+
+    <!-- ── OUTREACH PLAYBOOK ── -->
+    <div class="qmo-panel" id="qmop-playbook">
+      <div class="sl">outreach playbook · pilot framework · objections</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-header"><div class="card-title">Anchor Buyers — 5-Touch Sequence</div><div class="card-sub">Score 85+ · VP-led · Chapter Medicare · GoHealth · eHealth</div></div>
+          <div style="padding:14px;display:flex;flex-direction:column;gap:8px;">
+            <div style="display:grid;grid-template-columns:52px 1fr;gap:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:600;padding-top:2px;">Day 1</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:3px;">LinkedIn + Email</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">"We generate 2K+ Medicare IB calls/day. Our QM agency takes first. Overflow goes to qualified MP buyers. We have midwest gaps (OH·IL·IN·MO) that need buyers. Worth 15 min?"</div></div></div>
+            <div style="display:grid;grid-template-columns:52px 1fr;gap:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:600;padding-top:2px;">Day 4</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:3px;">Email — State Data</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">Send 1-page brief: OH 111K missed calls at 57% miss. IL 80K at 66%. PA 92K at 55%. "These are the exact states your agents can absorb today."</div></div></div>
+            <div style="display:grid;grid-template-columns:52px 1fr;gap:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:600;padding-top:2px;">Day 8</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:3px;">Phone — VP Direct</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">"You know AEP call supply is the constraint. We have 1.24M annual missed calls validated by 700 agents. 500-call pilot in OH before Sept 1?"</div></div></div>
+            <div style="display:grid;grid-template-columns:52px 1fr;gap:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:600;padding-top:2px;">Day 14</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:3px;">Pilot Proposal</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">500-call paid trial · fixed CPL · 30 days · compliance package · weekly report · state routing to licensed footprint.</div></div></div>
+            <div style="display:grid;grid-template-columns:52px 1fr;gap:10px;"><div style="font-family:var(--mono);font-size:10px;color:var(--amber);font-weight:600;padding-top:2px;">Day 21</div><div style="background:var(--bg2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;"><div style="font-size:9px;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-family:var(--mono);margin-bottom:3px;">NABIP / AHIP</div><div style="font-size:11px;color:var(--text2);line-height:1.5;">State data one-sheet in hand. Ask for 90-day AEP contract. Close on data, not the pitch.</div></div></div>
+          </div>
+        </div>
+        <div class="card" style="margin-bottom:0;">
+          <div class="card-header"><div class="card-title">Pilot → AEP Contract · 4 Stages</div></div>
+          <div style="padding:14px;">
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px;">
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;text-align:center;"><div style="font-size:24px;font-weight:600;color:var(--bg4);font-family:var(--mono);line-height:1;margin-bottom:5px;">01</div><div style="font-size:12px;font-weight:600;color:var(--blue);margin-bottom:4px;">Qualify</div><div style="font-size:10px;color:var(--text3);line-height:1.4;">Multi-carrier · 15+ states · TCPA · 20+ agents · AEP participant</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;text-align:center;"><div style="font-size:24px;font-weight:600;color:var(--bg4);font-family:var(--mono);line-height:1;margin-bottom:5px;">02</div><div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;">Trial</div><div style="font-size:10px;color:var(--text3);line-height:1.4;">500 calls · fixed CPL · 30 days · recordings + weekly report</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;text-align:center;"><div style="font-size:24px;font-weight:600;color:var(--bg4);font-family:var(--mono);line-height:1;margin-bottom:5px;">03</div><div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;">Review</div><div style="font-size:10px;color:var(--text3);line-height:1.4;">Day-30 data: conversion vs. sources · handle time · state perf</div></div>
+              <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px;text-align:center;"><div style="font-size:24px;font-weight:600;color:var(--bg4);font-family:var(--mono);line-height:1;margin-bottom:5px;">04</div><div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:4px;">AEP Lock</div><div style="font-size:10px;color:var(--text3);line-height:1.4;">Volume commit · routing config · compliance · signed Aug 15</div></div>
+            </div>
+            <div style="background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:var(--radius);padding:12px;font-size:11px;color:#ffd29a;line-height:1.6;">
+              <strong>AEP Timeline:</strong> Pilots live by Jun 30 → data review Jul 31 → contracts signed Aug 15 → routing live Sept 1 → AEP Oct 1. Every week of delay = missed AEP overflow revenue at the year's highest CPL.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sl">objection handling — 8 response cards</div>
+      <div class="obj-grid">
+        <div class="obj-card"><div class="obj-q">"We already have call sources."</div><div class="obj-a">Our calls are consumer-initiated at the exact moment of shopping — not recycled or re-marketed. Our 700 QM agents validate quality on your product mix before it ever reaches you. Run us head-to-head on conversion for 30 days — your data will make the case.</div></div>
+        <div class="obj-card"><div class="obj-q">"Why is Centerfield selling calls? Aren't you a competitor?"</div><div class="obj-a">We operate QM as our own agency — we use these calls first. When our agents aren't available, calls that would go unbid become marketplace inventory. We're not competing for your enrollments — we're solving a capacity gap while giving you premium media we already buy for our own operation.</div></div>
+        <div class="obj-card"><div class="obj-q">"We're worried about TCPA compliance."</div><div class="obj-a">Full TCPA consent chain on every call. Recordings available for audit. AHIP-certified QM agents. We cleared compliance with Centene and AmeriLife — same documentation package, one 30-min meeting with your compliance team.</div></div>
+        <div class="obj-card"><div class="obj-q">"We need to test before AEP commitment."</div><div class="obj-a">That's exactly our 500-call pilot — no commitment beyond the trial, 30 days, fixed CPL. At day 30 we review your conversion data together. If it doesn't outperform your current sources, we don't ask for the AEP contract. Risk is on us.</div></div>
+        <div class="obj-card"><div class="obj-q">"Your CPL is higher than what we pay now."</div><div class="obj-a">Higher CPL on lower-intent calls is a worse deal. Run the math on cost-per-enrollment: if our conversion is 2× your current source, we're less expensive per enrollment even at a 40% CPL premium. Happy to model that with your actual disposition data.</div></div>
+        <div class="obj-card"><div class="obj-q">"Too many priorities before AEP."</div><div class="obj-a">A 500-call pilot takes 2 weeks to stand up. If you wait until August, you won't have the conversion data to commit AEP volume before Oct 1 — and you'll miss the highest-CPL period of the year. Start the pilot now, decide with data in July.</div></div>
+        <div class="obj-card"><div class="obj-q">"We only work with exclusive call sources."</div><div class="obj-a">Our marketplace calls are live transfers routed exclusively to one buyer at a time — not shared leads. Consumer-initiated, state-matched, product-filtered, going directly to your agent team. Not simultaneously available to other buyers.</div></div>
+        <div class="obj-card"><div class="obj-q">"We're not licensed in all those states."</div><div class="obj-a">We route exclusively to your licensed state footprint — you only receive calls from states where your agents can sell. The 111K Ohio missed calls only go to a buyer licensed in Ohio. State matching is built into our routing, not your problem to manage.</div></div>
+      </div>
+    </div>
+
+  </div><!-- /sec-qmo -->
+
+  <!-- ════════════════════════════════════════
        NOTION WORKSPACE
   ════════════════════════════════════════ -->
   <div class="section" id="sec-notion">
@@ -1925,6 +2143,7 @@ function showSection(id,btn,side){
     'supply-demand':['Supply ↔ Demand Bridge','Aligning media BD with client demand · gap analysis'],
     'media-aep':['Media AEP Critical Path','12 media items before Sept 1 · click to check off'],
     'consumer-profiles':['Consumer Profiles','QM OEP actuals · 501 enrollments · media partner targeting brief · data: May 2026'],
+    qmo:['QM Overflow Buyers','State-level impact · 1.24M missed calls · $55–74M opportunity · 30 priority targets'],
     notion:['Notion Workspace','Client BD + Media BD pages and databases'],
   };
   const t=titles[id]||['Dashboard',''];
@@ -2128,6 +2347,217 @@ function renderAllTables(){
 
 // Kick off
 initDashboard();
+
+// ══════════════════════════════════════
+// QM OVERFLOW BUYER SECTION
+// ══════════════════════════════════════
+
+function qmoTab(id,btn){
+  document.querySelectorAll('.qmo-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#qmoTabStrip .qmo-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('qmop-'+id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='heatmap'){qmoBuildMap();qmoRenderStateTable();}
+  if(id==='revenue'){qmoRenderRevBars();qmoRenderRevTable();}
+  if(id==='targets'){qmoRenderBuyers('all');}
+}
+
+const QMO_DATA=[
+  {s:'TX',p:398038,b:60487,m:45436,mr:.114},{s:'FL',p:352172,b:40602,m:69637,mr:.198},
+  {s:'GA',p:208520,b:25446,m:84132,mr:.403},{s:'NC',p:207133,b:22771,m:61610,mr:.297},
+  {s:'OH',p:194777,b:64882,m:111004,mr:.570},{s:'MI',p:181355,b:34481,m:75439,mr:.416},
+  {s:'PA',p:169088,b:24099,m:92411,mr:.547},{s:'VA',p:132308,b:5080,m:10864,mr:.082},
+  {s:'AL',p:128875,b:12065,m:40570,mr:.315},{s:'AZ',p:122281,b:7314,m:10314,mr:.084},
+  {s:'IL',p:121845,b:37734,m:80176,mr:.658},{s:'SC',p:112045,b:3572,m:20898,mr:.187},
+  {s:'LA',p:111611,b:5649,m:24563,mr:.220},{s:'TN',p:100224,b:20017,m:26658,mr:.266},
+  {s:'IN',p:92420,b:19605,m:62642,mr:.678},{s:'OK',p:88936,b:7195,m:23842,mr:.268},
+  {s:'WI',p:83798,b:5575,m:35156,mr:.420},{s:'MS',p:81965,b:3544,m:19928,mr:.243},
+  {s:'CO',p:78748,b:1992,m:15049,mr:.191},{s:'KY',p:73802,b:3596,m:10749,mr:.146},
+  {s:'AR',p:62527,b:12647,m:39650,mr:.634},{s:'MO',p:60247,b:9558,m:47678,mr:.791},
+  {s:'CA',p:57708,b:28,m:4750,mr:.082},{s:'ID',p:55466,b:20,m:8293,mr:.150},
+  {s:'NV',p:53708,b:250,m:7196,mr:.134},{s:'NY',p:50812,b:3987,m:16550,mr:.326},
+  {s:'WA',p:45574,b:4710,m:38266,mr:.840},{s:'NJ',p:40384,b:2388,m:7473,mr:.185},
+  {s:'MN',p:34395,b:492,m:8300,mr:.241},{s:'WV',p:32705,b:3605,m:14696,mr:.449},
+  {s:'NM',p:29005,b:4296,m:11149,mr:.384},{s:'MA',p:28586,b:24,m:864,mr:.030},
+  {s:'OR',p:26306,b:988,m:10636,mr:.404},{s:'KS',p:23269,b:5401,m:13192,mr:.567},
+  {s:'IA',p:21474,b:1008,m:9250,mr:.431},{s:'MD',p:18055,b:20,m:4673,mr:.259},
+  {s:'MT',p:17791,b:12,m:3036,mr:.171},{s:'UT',p:17691,b:289,m:16850,mr:.952},
+  {s:'CT',p:15600,b:88,m:107,mr:.007},{s:'WY',p:11449,b:5,m:11441,mr:.999},
+  {s:'SD',p:10367,b:9,m:10345,mr:.998},{s:'DE',p:9002,b:27,m:5698,mr:.633},
+  {s:'RI',p:8489,b:12,m:7290,mr:.859},{s:'ME',p:8063,b:113,m:157,mr:.019},
+  {s:'NH',p:7217,b:9,m:6728,mr:.932},{s:'NE',p:7141,b:96,m:3136,mr:.439},
+  {s:'DC',p:6341,b:4,m:4238,mr:.668},{s:'HI',p:2833,b:2,m:0,mr:0},
+  {s:'VT',p:2090,b:2,m:1728,mr:.827},{s:'ND',p:1945,b:9,m:1675,mr:.861},
+  {s:'AK',p:1150,b:0,m:0,mr:0},
+];
+const QMO_MAP={};QMO_DATA.forEach(d=>QMO_MAP[d.s]=d);
+let qmoCPL=45,qmoMapMode='pings',qmoMapBuilt=false;
+const qmoFmt=n=>n>=1000000?(n/1e6).toFixed(1)+'M':n>=1000?(n/1000).toFixed(0)+'K':String(n);
+const qmoPct=n=>(n*100).toFixed(1)+'%';
+const qmoCol=mr=>mr>.6?'var(--red)':mr>.4?'var(--amber)':mr>.2?'var(--blue)':'var(--green)';
+
+function qmoRenderStateTable(){
+  const sorted=[...QMO_DATA].sort((a,b)=>b.p-a.p);
+  document.getElementById('qmoStateTable').innerHTML=sorted.map(d=>{
+    const br=d.b/d.p,mc=qmoCol(d.mr),rev=(d.m*45/1000).toFixed(0);
+    const pri=d.mr>.6&&d.p>20000?'RECRUIT NOW':d.mr>.4&&d.p>20000?'HIGH PRI':d.p>100000?'VOLUME':'MONITOR';
+    const pc=pri==='RECRUIT NOW'?'var(--red)':pri==='HIGH PRI'?'var(--amber)':pri==='VOLUME'?'var(--blue)':'var(--text3)';
+    return`<tr><td><strong style="color:var(--text)">${d.s}</strong></td><td style="font-family:var(--mono)">${qmoFmt(d.p)}</td><td style="font-family:var(--mono)">${qmoFmt(d.b)}</td><td style="font-family:var(--mono);color:var(--green)">${qmoPct(br)}</td><td style="font-family:var(--mono);color:${mc}">${qmoFmt(d.m)}</td><td style="font-family:var(--mono);color:${mc}">${qmoPct(d.mr)}</td><td style="font-family:var(--mono);color:var(--green)">${d.m>0?'$'+rev+'K':'—'}</td><td style="font-family:var(--mono);font-size:10px;color:${pc}">${pri}</td></tr>`;
+  }).join('');
+}
+
+function qmoUpdateCPL(v){
+  qmoCPL=+v;
+  document.getElementById('qmoCplDisplay').textContent=v;
+  qmoRenderRevBars();qmoRenderRevTable();
+}
+function qmoRenderRevBars(){
+  const top20=[...QMO_DATA].filter(d=>d.m>0).sort((a,b)=>b.m-a.m).slice(0,20);
+  const mx=top20[0].m*qmoCPL;
+  document.getElementById('qmoRevBars').innerHTML=top20.map(d=>{
+    const rev=d.m*qmoCPL,wp=(rev/mx*100).toFixed(1),mc=qmoCol(d.mr);
+    return`<div class="qmo-bar-row"><div class="qmo-bar-state">${d.s}</div><div class="qmo-bar-track"><div class="qmo-bar-fill" style="width:${wp}%;background:${mc}"><span>$${(rev/1000).toFixed(0)}K</span></div></div><div class="qmo-bar-meta" style="color:${mc}">${qmoPct(d.mr)}</div></div>`;
+  }).join('');
+}
+function qmoRenderRevTable(){
+  const top15=[...QMO_DATA].filter(d=>d.m>0).sort((a,b)=>b.m-a.m).slice(0,15);
+  document.getElementById('qmoRevTable').innerHTML=top15.map((d,i)=>{
+    const rev=d.m*qmoCPL,aep=rev*3,mc=qmoCol(d.mr);
+    const act=d.mr>.5&&d.p>50000?'RECRUIT BUYER NOW':d.mr>.3&&d.p>50000?'HIGH PRIORITY':'STANDARD';
+    const ac=act==='RECRUIT BUYER NOW'?'var(--red)':act==='HIGH PRIORITY'?'var(--amber)':'var(--text3)';
+    return`<tr><td style="font-family:var(--mono);color:var(--text3)">${i+1}</td><td><strong>${d.s}</strong></td><td style="font-family:var(--mono)">${qmoFmt(d.m)}</td><td style="font-family:var(--mono);color:${mc}">${qmoPct(d.mr)}</td><td style="font-family:var(--mono);color:var(--green)">$${(rev/1000).toFixed(0)}K</td><td style="font-family:var(--mono);color:var(--amber)">$${(aep/1000).toFixed(0)}K</td><td style="font-family:var(--mono);font-size:10px;color:${ac}">${act}</td></tr>`;
+  }).join('');
+}
+
+const QMO_BUYERS=[
+  {r:1,co:'Chapter Medicare',type:'Agency',score:92,states:'OH·IL·IN·MO·MI·WI·PA',aep:'Yes',rev:'$17.1M',pri:'Anchor',action:'VP outreach · midwest overflow pitch'},
+  {r:2,co:'GoHealth',type:'Agency',score:90,states:'OH·IL·IN·PA·GA·NC·MI',aep:'Yes',rev:'$15.3M',pri:'Anchor',action:'AEP deck + midwest state data brief'},
+  {r:3,co:'Integrity MG',type:'FMO',score:92,states:'50 states · full coverage',aep:'Yes',rev:'$20.3M',pri:'Anchor',action:'Contract in nego — add midwest routing'},
+  {r:4,co:'eHealth (enterprise)',type:'BPO',score:88,states:'50 states · full coverage',aep:'Yes',rev:'$20.3M',pri:'Anchor',action:'VP contact — 50-state pitch'},
+  {r:5,co:'SelectQuote MA',type:'Agency',score:88,states:'OH·IL·MI·IN·PA·MO',aep:'Yes',rev:'$14.4M',pri:'Anchor',action:'Midwest overflow case study'},
+  {r:6,co:'AmeriLife (expand)',type:'FMO',score:90,states:'Active — add OH/IL/MO routing',aep:'Yes',rev:'$13.5M',pri:'Anchor',action:'Existing client — expand overflow states'},
+  {r:7,co:'Senior Market Sales',type:'FMO',score:85,states:'Midwest FMO · OH·IL·IN·MO',aep:'Yes',rev:'$12.6M',pri:'Anchor',action:'FMO midwest pitch + AEP angle'},
+  {r:8,co:'Connie Health',type:'Agency',score:85,states:'Multi-state digital · midwest',aep:'Yes',rev:'$11.3M',pri:'Anchor',action:'Digital agency — state routing pitch'},
+  {r:9,co:'TZ Insurance',type:'Agency',score:82,states:'SE + midwest blend',aep:'Yes',rev:'$8.1M',pri:'Growth',action:'Qualify midwest licensing depth'},
+  {r:10,co:'HealthMarkets',type:'BPO',score:72,states:'SE strong + midwest',aep:'Yes',rev:'$9.0M',pri:'Growth',action:'500-call pilot in OH/IL/PA'},
+  {r:11,co:'Mutual of Omaha',type:'Carrier',score:82,states:'OH·IL·IN·MO·MI midwest',aep:'Yes',rev:'$9.9M',pri:'Growth',action:'Carrier pitch — single rate caveat'},
+  {r:12,co:'Ritter Insurance Mktg',type:'FMO',score:80,states:'Midwest + SE FMO network',aep:'Yes',rev:'$8.0M',pri:'Growth',action:'NABIP conference intro + data brief'},
+  {r:13,co:'PHP Agency',type:'FMO',score:72,states:'Multi-state FMO network',aep:'Yes',rev:'$6.5M',pri:'Growth',action:'IMO aggregator pitch'},
+  {r:14,co:'Precision Senior Mktg',type:'Agency',score:80,states:'25+ states',aep:'Yes',rev:'$6.0M',pri:'Growth',action:'Email sequence · BD Lead'},
+  {r:15,co:'PIAA (Partners in Action)',type:'Agency',score:75,states:'20+ states',aep:'Yes',rev:'$4.5M',pri:'Growth',action:'BD Lead email + call'},
+  {r:16,co:'Benefytt Technologies',type:'Agency',score:70,states:'20+ states',aep:'TBD',rev:'$3.5M',pri:'Growth',action:'Qualify MA agent count first'},
+  {r:17,co:'Humana (direct)',type:'Carrier',score:80,states:'50 states',aep:'Yes',rev:'$18.0M',pri:'Growth',action:'Long cycle — start relationship now'},
+  {r:18,co:'Aetna CVS',type:'Carrier',score:78,states:'50 states',aep:'Yes',rev:'$15.0M',pri:'Growth',action:'Identify procurement contact'},
+  {r:19,co:'UnitedHealthcare',type:'Carrier',score:75,states:'50 states',aep:'Yes',rev:'$12.0M',pri:'Growth',action:'Enterprise — start relationship now'},
+  {r:20,co:'Centene (expand)',type:'Carrier',score:95,states:'Active — expand midwest states',aep:'Yes',rev:'Active',pri:'Active',action:'AEP volume +40% + midwest state routing'},
+  {r:21,co:'WellCare (Centene)',type:'Carrier',score:80,states:'45+ states',aep:'Yes',rev:'$7.0M',pri:'Growth',action:'Explore via Centene relationship'},
+  {r:22,co:'iGo (insurance BPO)',type:'BPO',score:70,states:'25+ states',aep:'TBD',rev:'$3.5M',pri:'Growth',action:'LinkedIn BD Lead outreach'},
+  {r:23,co:'Senior Healthcare Direct',type:'BPO',score:72,states:'30+ states',aep:'Yes',rev:'$4.5M',pri:'Growth',action:'Pilot proposal · 200-call entry'},
+  {r:24,co:'National General (MA)',type:'BPO',score:68,states:'20+ states',aep:'TBD',rev:'$3.0M',pri:'Nurture',action:'ACA/Health pitch first · eval MA'},
+  {r:25,co:'NABIP Network Partners',type:'FMO',score:75,states:'National reach · varies',aep:'Yes',rev:'$5.0M',pri:'Growth',action:'Conference sourcing play'},
+  {r:26,co:'Cigna MA Division',type:'Carrier',score:72,states:'40+ states',aep:'Yes',rev:'$6.0M',pri:'Nurture',action:'Conference intro · 2026 target'},
+  {r:27,co:'Wholesale BPO Network',type:'BPO',score:68,states:'30+ states',aep:'TBD',rev:'$3.5M',pri:'Nurture',action:'Qualify — confirm multi-carrier'},
+  {r:28,co:'PHP / IMO Aggregator',type:'FMO',score:58,states:'IMO network',aep:'TBD',rev:'$2.0M',pri:'Nurture',action:'IMO network outreach · AE'},
+  {r:29,co:'Chapter Medicare (SMB)',type:'Agency',score:72,states:'Multi-state',aep:'TBD',rev:'$3.5M',pri:'Nurture',action:'Qualify volume appetite'},
+  {r:30,co:'TZ Insurance (Tier 2)',type:'Agency',score:60,states:'SE focus',aep:'TBD',rev:'$2.5M',pri:'Nurture',action:'LinkedIn outreach · AE'},
+];
+let qmoBuyerFilterVal='all';
+function qmoFilterBuyers(f,btn){
+  qmoBuyerFilterVal=f;
+  document.querySelectorAll('#qmoBuyerFilter .fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  qmoRenderBuyers(f);
+}
+function qmoRenderBuyers(f){
+  const data=f==='all'?QMO_BUYERS:QMO_BUYERS.filter(t=>t.type===f);
+  const priMap={Active:'p-active',Anchor:'p-nego',Growth:'p-contact',Nurture:'p-target'};
+  const typeColor={Agency:'var(--red)',FMO:'var(--blue)',BPO:'var(--amber)',Carrier:'var(--purple)'};
+  document.getElementById('qmoBuyerTable').innerHTML=data.map(t=>{
+    const sc=t.score>=88?'var(--green)':t.score>=75?'var(--blue)':'var(--amber)';
+    return`<tr><td style="font-family:var(--mono);color:var(--text3)">${t.r}</td><td><strong style="color:var(--text)">${t.co}</strong></td><td style="font-family:var(--mono);font-size:10px;color:${typeColor[t.type]}">${t.type}</td><td><div class="score-bar"><div class="sb-track"><div class="sb-fill" style="width:${t.score}%;background:${sc}"></div></div><span class="sb-num" style="color:${sc}">${t.score}</span></div></td><td style="font-size:11px;color:var(--text3)">${t.states}</td><td class="${t.aep==='Yes'?'aep-yes':'aep-tbd'}">${t.aep}</td><td style="font-family:var(--mono);font-size:11px;color:var(--green)">${t.rev}</td><td><span class="pill ${priMap[t.pri]||'p-target'}">${t.pri}</span></td><td class="action-text">${t.action}</td></tr>`;
+  }).join('');
+}
+
+// MAP
+const QMO_PATHS={
+  WA:'M 68 55 L 135 55 L 130 105 L 68 100 Z',OR:'M 68 108 L 133 103 L 130 155 L 68 155 Z',
+  CA:'M 68 158 L 125 152 L 120 270 L 68 280 Z',ID:'M 138 60 L 175 57 L 182 135 L 132 145 Z',
+  NV:'M 90 175 L 127 155 L 128 240 L 97 262 Z',AZ:'M 100 268 L 162 262 L 162 320 L 100 320 Z',
+  MT:'M 140 48 L 240 45 L 240 95 L 140 97 Z',WY:'M 148 100 L 230 97 L 230 145 L 148 147 Z',
+  CO:'M 152 150 L 235 147 L 235 197 L 152 200 Z',NM:'M 152 202 L 230 200 L 230 252 L 152 255 Z',
+  ND:'M 248 44 L 325 42 L 325 85 L 248 87 Z',SD:'M 248 90 L 325 88 L 325 132 L 248 135 Z',
+  NE:'M 248 137 L 337 134 L 337 165 L 248 168 Z',KS:'M 248 170 L 338 167 L 338 200 L 248 203 Z',
+  OK:'M 248 205 L 355 202 L 358 232 L 268 242 L 248 237 Z',TX:'M 200 245 L 358 235 L 368 335 L 275 375 L 200 340 Z',
+  MN:'M 330 42 L 390 42 L 393 95 L 350 100 L 330 87 Z',IA:'M 330 100 L 392 97 L 393 140 L 330 143 Z',
+  MO:'M 330 145 L 398 142 L 400 195 L 340 205 L 330 200 Z',AR:'M 332 207 L 400 198 L 400 240 L 332 245 Z',
+  LA:'M 328 248 L 398 243 L 400 295 L 360 302 L 328 285 Z',WI:'M 378 48 L 430 48 L 432 100 L 378 102 Z',
+  IL:'M 397 100 L 435 97 L 437 175 L 397 178 Z',MI:'M 430 50 L 490 55 L 488 95 L 430 102 Z',
+  IN:'M 438 100 L 472 97 L 473 155 L 438 158 Z',OH:'M 473 98 L 515 96 L 515 158 L 473 160 Z',
+  KY:'M 400 180 L 515 162 L 517 198 L 400 210 Z',TN:'M 400 213 L 520 200 L 522 233 L 400 245 Z',
+  MS:'M 400 248 L 440 245 L 442 305 L 400 308 Z',AL:'M 442 248 L 478 245 L 480 320 L 442 322 Z',
+  GA:'M 480 215 L 530 212 L 530 310 L 480 322 Z',FL:'M 480 325 L 565 318 L 565 382 L 490 385 L 480 360 Z',
+  SC:'M 530 215 L 570 212 L 570 260 L 530 265 Z',NC:'M 520 198 L 600 193 L 600 225 L 520 230 Z',
+  VA:'M 518 163 L 600 158 L 602 195 L 518 200 Z',WV:'M 515 160 L 555 158 L 558 195 L 515 198 Z',
+  PA:'M 517 120 L 600 117 L 600 158 L 517 162 Z',NY:'M 530 85 L 615 80 L 618 120 L 530 125 Z',
+  VT:'M 608 78 L 628 76 L 628 105 L 608 108 Z',NH:'M 630 74 L 650 72 L 650 108 L 630 110 Z',
+  ME:'M 628 45 L 665 42 L 665 75 L 628 78 Z',MA:'M 605 110 L 660 107 L 660 128 L 605 130 Z',
+  RI:'M 638 130 L 655 128 L 655 145 L 638 145 Z',CT:'M 607 132 L 638 130 L 638 147 L 607 148 Z',
+  NJ:'M 590 130 L 610 127 L 612 158 L 590 160 Z',DE:'M 572 158 L 592 156 L 592 172 L 572 175 Z',
+  MD:'M 543 155 L 593 153 L 593 175 L 543 178 Z',DC:'M 554 162 L 565 160 L 565 168 L 554 170 Z',
+  AK:'M 80 380 L 160 380 L 160 440 L 80 440 Z',HI:'M 200 420 L 240 420 L 240 445 L 200 445 Z',
+};
+function qmoMapColor(s){
+  const d=QMO_MAP[s];if(!d)return'#111318';
+  let val,mx;
+  if(qmoMapMode==='pings'){val=d.p;mx=398038;}
+  else if(qmoMapMode==='missed'){val=d.m;mx=111004;}
+  else{val=d.mr;mx=1;}
+  const t=Math.pow(val/mx,.5);
+  if(qmoMapMode==='missrate'){
+    if(t<.3)return`rgba(74,158,255,${.15+t*.6})`;
+    if(t<.6)return`rgba(245,166,35,${.25+t*.5})`;
+    return`rgba(255,107,107,${.35+t*.55})`;
+  }
+  return`rgba(0,212,160,${.08+t*.87})`;
+}
+function qmoBuildMap(){
+  if(qmoMapBuilt)return;qmoMapBuilt=true;
+  const wrap=document.getElementById('qmoMapWrap');
+  let svg='<svg viewBox="0 0 700 470" xmlns="http://www.w3.org/2000/svg"><rect width="700" height="470" fill="transparent"/>';
+  Object.entries(QMO_PATHS).forEach(([st,path])=>{
+    svg+=`<path class="qmo-state" data-state="${st}" d="${path}" fill="${qmoMapColor(st)}" onmouseenter="qmoShowTip(event,'${st}')" onmouseleave="qmoHideTip()"/>`;
+    const d=QMO_MAP[st];
+    if(d&&d.p>5000){
+      const nums=path.match(/[\d.]+/g)||[],xs=[],ys=[];
+      for(let i=0;i<nums.length;i+=2){xs.push(+nums[i]);ys.push(+nums[i+1]);}
+      const cx=xs.reduce((a,b)=>a+b)/xs.length,cy=ys.reduce((a,b)=>a+b)/ys.length;
+      svg+=`<text x="${cx}" y="${cy+3}" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.55)" font-family="DM Mono,monospace" pointer-events="none">${st}</text>`;
+    }
+  });
+  wrap.innerHTML=svg+'</svg>';
+  qmoRenderMapLegend();
+}
+function qmoSetMap(mode,btn){
+  qmoMapMode=mode;
+  document.querySelectorAll('#qmoMapToggle .fbtn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.qmo-state').forEach(p=>p.setAttribute('fill',qmoMapColor(p.getAttribute('data-state'))));
+  qmoRenderMapLegend();
+}
+function qmoRenderMapLegend(){
+  const leg=document.getElementById('qmoMapLegend');
+  if(qmoMapMode==='pings')leg.innerHTML='<span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(0,212,160,.12)"></span>Low</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(0,212,160,.55)"></span>Medium</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(0,212,160,.95)"></span>High volume</span>';
+  else if(qmoMapMode==='missed')leg.innerHTML='<span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(0,212,160,.12)"></span>Few missed</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(0,212,160,.55)"></span>Medium</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(0,212,160,.95)"></span>Many missed</span>';
+  else leg.innerHTML='<span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(74,158,255,.5)"></span>&lt;30%</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(245,166,35,.7)"></span>30–60%</span><span style="display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text3);font-family:var(--mono)"><span style="width:14px;height:9px;border-radius:2px;background:rgba(255,107,107,.8)"></span>&gt;60% miss</span>';
+}
+function qmoShowTip(e,state){
+  const d=QMO_MAP[state];if(!d)return;
+  const tip=document.getElementById('qmoMapTip'),rev=(d.m*45/1000).toFixed(0);
+  tip.innerHTML=`<div class="qmo-tt-title">${state}</div><div class="qmo-tt-row"><span>Pings</span><span>${qmoFmt(d.p)}</span></div><div class="qmo-tt-row"><span>Bid Rate</span><span>${qmoPct(d.b/d.p)}</span></div><div class="qmo-tt-row"><span>Missed</span><span style="color:var(--amber)">${qmoFmt(d.m)}</span></div><div class="qmo-tt-row"><span>Miss Rate</span><span style="color:${qmoCol(d.mr)}">${qmoPct(d.mr)}</span></div><div class="qmo-tt-row"><span>Rev @ $45</span><span style="color:var(--green)">$${rev}K</span></div>`;
+  tip.style.display='block';tip.style.left=(e.clientX+15)+'px';tip.style.top=(e.clientY-10)+'px';
+}
+function qmoHideTip(){document.getElementById('qmoMapTip').style.display='none';}
 </script>
+<div class="qmo-map-tip" id="qmoMapTip"></div>
 </body>
 </html>
